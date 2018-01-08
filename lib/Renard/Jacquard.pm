@@ -1,8 +1,5 @@
-use Modern::Perl;
+use Renard::Incunabula::Common::Setup;
 package Renard::Jacquard;
 # ABSTRACT: A high-level structured graphics library
-
-use strict;
-use warnings;
 
 1;
