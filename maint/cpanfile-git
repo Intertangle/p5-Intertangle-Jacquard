@@ -1,3 +1,3 @@
-requires 'Renard::Yarn',
-	git => 'https://github.com/project-renard/p5-Renard-Yarn.git',
+requires 'Renard::Taffeta',
+	git => 'https://github.com/project-renard/p5-Renard-Taffeta.git',
 	branch => 'master';

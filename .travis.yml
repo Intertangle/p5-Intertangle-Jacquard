@@ -7,6 +7,10 @@ cache:
 addons:
   apt:
     packages:
+      # from Alien::Graphene
+      - python3-setuptools # to install meson
+      - libgirepository1.0-dev
+
       - libcairo2
       - aspell     # for dzil Test::PodSpelling
       - aspell-en  # for dzil Test::PodSpelling
