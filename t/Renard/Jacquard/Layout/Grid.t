@@ -26,10 +26,10 @@ subtest "Create a grid" => sub {
 	my @actors;
 	for my $item_num (0..@$actors_bounds-1) {
 		my $actor = Renard::Jacquard::Actor->new(
-			bounds => Renard::Yarn::Graphene::Size->new(
-				width => $actors_bounds->[$item_num][0],
-				height => $actors_bounds->[$item_num][1]
-			),
+			bounds => [
+				$actors_bounds->[$item_num][0],
+				$actors_bounds->[$item_num][1]
+			],
 		);
 
 		push @actors, $actor;

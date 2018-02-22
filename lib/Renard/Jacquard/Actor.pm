@@ -5,6 +5,7 @@ package Renard::Jacquard::Actor;
 use Moo;
 use Renard::Incunabula::Common::Types qw(InstanceOf);
 use Renard::Jacquard::Types qw(Actor);
+use Renard::Yarn::Types qw(Size);
 use Tree::DAG_Node;
 
 =attr _tree_dag_node
@@ -29,6 +30,8 @@ has layout => (
 
 has bounds => (
 	is => 'ro',
+	isa => Size,
+	coerce => 1,
 );
 
 method add_child( (Actor) $actor, %options  ) {
