@@ -22,10 +22,20 @@ has _data => (
 	},
 );
 
+=method add_actor
+
+Adds an actor a fixed C<( x, y )> position.
+
+=cut
 method add_actor( $actor, (PositiveOrZeroNum) :$x, (PositiveOrZeroNum) :$y ) {
 	$self->_data->{ $actor } = { x => $x, y => $y };
 }
 
+=method update
+
+Layout the actors.
+
+=cut
 method update() {
 	my @actors = keys %{ $self->_data };
 	my %actor_positions;

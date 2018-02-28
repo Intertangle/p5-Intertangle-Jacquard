@@ -8,11 +8,21 @@ use Moo;
 use Tie::RefHash;
 use List::AllUtils qw(max);
 
+=attr intergrid_space
+
+How much space to add between grids spots.
+
+=cut
 has intergrid_space => (
 	is => 'ro',
 	default => sub { 0 },
 );
 
+=attr mingrid_space
+
+Minimum space to use for a grid space when it is empty.
+
+=cut
 has mingrid_space => (
 	is => 'ro',
 	default => sub { 0 },
@@ -44,10 +54,20 @@ has _data => (
 	},
 );
 
+=method add_actor
+
+Add an actor the grid.
+
+=cut
 method add_actor( $actor, (PositiveOrZeroInt) :$row, (PositiveOrZeroInt) :$column ) {
 	$self->_data->{ $actor } = { row => $row, column => $column };
 }
 
+=method update
+
+Layout the actors.
+
+=cut
 method update() {
 	my @actors = keys %{ $self->_data };
 	my %actor_positions;

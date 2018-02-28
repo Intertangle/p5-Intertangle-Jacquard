@@ -8,31 +8,14 @@ use Mu;
 
 extends qw(Renard::Jacquard::Layout::Grid);
 
-=attr fill_direction
+=attr fill_major_order
 
+One of
 
-1 2
-3 4
+- row
+- column
 
-TL:
-	row: LR: 1 2 3 4
-	column: TB: 1 3 2 4
-
-TR:
-	row: RL: 2 1 4 3
-	column: TB: 2 4 1 3
-
-BL:
-	row: LR: 3 4 1 2
-	column: BT: 3 1 4 2
-
-BR:
-	row: RL: 4 3 2 1
-	column: BT: 4 2 3 1
-
-
-TODO row_major_left_to_right, row_major_right_to_left
-column_major_top_to_bottom, column_major_bottom_to_top
+for row-major and column-major order respectively.
 
 =cut
 has fill_major_order => (
@@ -41,22 +24,71 @@ has fill_major_order => (
 	isa => Enum['row', 'column'],
 );
 
+=attr fill_start_corner
+
+One of
+
+- top-left
+- top-right
+- bottom-left
+- bottom-right
+
+=cut
 has fill_start_corner => (
 	is => 'ro',
 	default => sub { 'top-left' },
 	isa => Enum['top-left', 'top-right', 'bottom-left', 'bottom-right'],
 );
 
+=method number_of_actors
+
+Number of actors currently in the grid.
+
+=cut
 method number_of_actors() :ReturnType(PositiveOrZeroInt) {
 	scalar keys %{ $self->_data };
 }
 
+=method get_row_column
+
+Returns the row and column for the C<$actor> as a tuple.
+
+=cut
 method get_row_column( $actor ) :ReturnType( list => Tuple[PositiveOrZeroInt,PositiveOrZeroInt]) {
 	my $data = $self->_data->{$actor};
 
 	( $data->{row}, $data->{column} );
 }
 
+=method _item_number_to_row_column
+
+Example of how the layout works:
+
+  1 2
+  3 4
+  
+  top-left:
+  
+      row:    LR: 1 2 3 4
+      column: TB: 1 3 2 4
+  
+  top-right:
+  
+      row:    RL: 2 1 4 3
+      column: TB: 2 4 1 3
+  
+  bottom-left:
+  
+      row:    LR: 3 4 1 2
+      column: BT: 3 1 4 2
+  
+  bottom-right:
+  
+      row:    RL: 4 3 2 1
+      column: BT: 4 2 3 1
+
+
+=cut
 method _item_number_to_row_column( (PositiveOrZeroInt) $number )
 	:ReturnType( list => Dict[ row => PositiveOrZeroInt, column => PositiveOrZeroInt ]) {
 
@@ -111,6 +143,13 @@ method _item_number_to_row_column( (PositiveOrZeroInt) $number )
 	);
 }
 
+=method add_actor
+
+Adds an actor sequentially to the grid.
+
+This only allows a single actor to occupy a space in the grid.
+
+=cut
 method add_actor( $actor ) {
 	my $item_num = $self->number_of_actors;
 	$self->SUPER::add_actor(
