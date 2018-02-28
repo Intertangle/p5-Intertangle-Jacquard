@@ -1,5 +1,5 @@
-package Renard::Jacquard::Layout::Grid;
 use Renard::Incunabula::Common::Setup;
+package Renard::Jacquard::Layout::Grid;
 # ABSTRACT: A grid layout
 
 use Renard::Incunabula::Common::Types qw(PositiveOrZeroInt PositiveInt);

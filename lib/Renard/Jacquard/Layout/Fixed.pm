@@ -1,5 +1,5 @@
-package Renard::Jacquard::Layout::Fixed;
 use Renard::Incunabula::Common::Setup;
+package Renard::Jacquard::Layout::Fixed;
 # ABSTRACT: A fixed layout
 
 use Renard::Incunabula::Common::Types qw(PositiveOrZeroNum);
