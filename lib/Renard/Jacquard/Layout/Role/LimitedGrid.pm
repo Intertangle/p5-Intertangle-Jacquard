@@ -38,7 +38,7 @@ before add_actor => method( @ ) {
 	if( ! $self->can_add_more_actors ) {
 		Renard::Jacquard::Error::Layout::MaximumNumberOfActors->throw({
 			msg => "Can not add more than @{[ $self->_maximum_number_of_items ]} actor(s)",
-			data => { maximum => $self->_maximum_number_of_items },
+			payload => { maximum => $self->_maximum_number_of_items },
 		});
 	}
 };
