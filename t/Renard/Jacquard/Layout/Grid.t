@@ -2,6 +2,8 @@
 
 use Test::Most tests => 1;
 
+use lib 't/lib';
+
 use Renard::Incunabula::Common::Setup;
 use Renard::Jacquard::Actor;
 use Renard::Jacquard::Layout::Grid;
@@ -60,27 +62,8 @@ subtest "Create a grid" => sub {
 	is $positions->{$actors[9]}, [  0, 50 ], 'position of actor 9';
 	is $positions->{$actors[10]},[ 10, 50 ], 'position of actor 10';
 
-	require SVG;
-	SVG->import;
-	my $svg = SVG->new( width => 100, height => 100 );
-	use Renard::Taffeta::Graphics::Rectangle;
-	use Renard::Taffeta::Style::Fill;
-	use Renard::Taffeta::Style::Stroke;
-	use Renard::Taffeta::Color::Named;
-	for my $actor (@actors) {
-		my $gfx_rect = Renard::Taffeta::Graphics::Rectangle->new(
-			position => $positions->{$actor},
-			width => $actor->bounds->width, height => $actor->bounds->height,
-			fill => Renard::Taffeta::Style::Fill->new(
-				color => Renard::Taffeta::Color::Named->new( name => 'svg:red' ),
-			),
-			stroke => Renard::Taffeta::Style::Stroke->new(
-				color => Renard::Taffeta::Color::Named->new( name => 'svg:blue' ),
-			),
-		);
-		$gfx_rect->render_svg( $svg )
-	}
-	#path('test.svg')->spew_utf8($svg->xmlify);
+	use RenderTree;
+	RenderTree->render_to_svg($container, path('test.svg'));
 };
 
 done_testing;
