@@ -8,6 +8,8 @@ use Renard::Jacquard::Types qw(Actor);
 use Renard::Yarn::Types qw(Size);
 use Tree::DAG_Node;
 
+use Renard::Jacquard::Content::Null;
+
 =attr _tree_dag_node
 
 Use delegation to C<Tree::DAG_Node> to build scene graph.
@@ -33,16 +35,26 @@ has layout => (
 	is => 'ro',
 );
 
-=attr bounds
+=attr content
 
-The bounds for the actor.
+The content for the actor.
 
 =cut
-has bounds => (
+has content => (
 	is => 'ro',
-	isa => Size,
-	coerce => 1,
+	default => sub { Renard::Jacquard::Content::Null->new },
 );
+
+has transform => (
+	is => 'rw',
+	# TODO : make a transform class
+	#isa => InstanceOf['Renard::Yarn::Graphene::Matrix'],
+	default => sub { Transform::Linear->new },
+);
+
+method bounds( $state ) {
+	$self->content->bounds( $state );
+}
 
 =method add_child
 
@@ -53,9 +65,9 @@ method add_child( (Actor) $actor, %options  ) {
 	$self->_tree_dag_node->add_daughter(
 		$actor->_tree_dag_node
 	);
-	if( exists $options{layout} && defined $options{layout} ) {
-		$self->layout->add_actor( $actor, %{ $options{layout} } );
-	}
+	$self->layout->add_actor( $actor,
+		exists $options{layout} ? %{ $options{layout} } : ()
+	);
 }
 
 =method number_of_children

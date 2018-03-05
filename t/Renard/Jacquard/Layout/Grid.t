@@ -8,6 +8,7 @@ use Renard::Incunabula::Common::Setup;
 use Renard::Jacquard::Actor;
 use Renard::Jacquard::Layout::Grid;
 use Renard::Yarn::Graphene;
+use Renard::Jacquard::Content::Rectangle;
 
 subtest "Create a grid" => sub {
 	my $layout = Renard::Jacquard::Layout::Grid->new();
@@ -26,10 +27,10 @@ subtest "Create a grid" => sub {
 	my @actors;
 	for my $item_num (0..@$actors_bounds-1) {
 		my $actor = Renard::Jacquard::Actor->new(
-			bounds => [
-				$actors_bounds->[$item_num][0],
-				$actors_bounds->[$item_num][1]
-			],
+			content => Renard::Jacquard::Content::Rectangle->new(
+				width  => $actors_bounds->[$item_num][0],
+				height => $actors_bounds->[$item_num][1]
+			),
 		);
 
 		push @actors, $actor;
@@ -43,6 +44,7 @@ subtest "Create a grid" => sub {
 		);
 	}
 
+	# TODO add graphics state
 	my $positions = $container->layout->update;
 
 	is scalar keys %$positions, 11, 'have the right amount of actors';

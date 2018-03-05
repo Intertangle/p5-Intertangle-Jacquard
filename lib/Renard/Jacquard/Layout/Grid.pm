@@ -68,7 +68,7 @@ method add_actor( $actor, (PositiveOrZeroInt) :$row, (PositiveOrZeroInt) :$colum
 Layout the actors.
 
 =cut
-method update() {
+method update( $state ) {
 	my @actors = keys %{ $self->_data };
 	my %actor_positions;
 	tie %actor_positions, 'Tie::RefHash';
@@ -89,7 +89,7 @@ method update() {
 	my $max_height_by_row = {
 		map {
 			my @actors = @{ $grid_by_row->{$_} };
-			my $max_height = max map { $_->bounds->height } @actors;
+			my $max_height = max map { $_->bounds( $state )->size->height } @actors;
 
 			$_ => $max_height;
 		} keys %$grid_by_row
@@ -98,7 +98,7 @@ method update() {
 	my $max_width_by_col = {
 		map {
 			my @actors = @{ $grid_by_col->{$_} };
-			my $max_width = max map { $_->bounds->width } @actors;
+			my $max_width = max map { $_->bounds( $state )->size->width } @actors;
 
 			$_ => $max_width;
 		} keys %$grid_by_col
