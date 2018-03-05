@@ -10,6 +10,10 @@ Renard::Jacquard - A high-level structured graphics library
 
 version 0.001
 
+=head1 SEE ALSO
+
+L<Repository information|http://project-renard.github.io/doc/development/repo/p5-Renard-Jacquard/>
+
 =head1 AUTHOR
 
 Project Renard
