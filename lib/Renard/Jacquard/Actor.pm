@@ -46,6 +46,13 @@ has content => (
 	default => sub { Renard::Jacquard::Content::Null->new },
 );
 
+=method bounds
+
+  method bounds( $state )
+
+Retrieves the bounds of the actor via the content.
+
+=cut
 method bounds( $state ) {
 	$self->content->bounds( $state );
 }
