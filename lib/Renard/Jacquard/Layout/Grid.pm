@@ -5,8 +5,8 @@ package Renard::Jacquard::Layout::Grid;
 use Renard::Incunabula::Common::Types qw(PositiveOrZeroInt PositiveInt);
 
 use Moo;
-use Tie::RefHash;
 use List::AllUtils qw(max);
+use Renard::Taffeta::Transform::Affine2D::Translation;
 
 =attr intergrid_space
 
@@ -68,14 +68,13 @@ method add_actor( $actor, (PositiveOrZeroInt) :$row, (PositiveOrZeroInt) :$colum
 Layout the actors.
 
 =cut
-method update( $state ) {
+method update() {
 	my @actors = keys %{ $self->_data };
-	my %actor_positions;
-	tie %actor_positions, 'Tie::RefHash';
 
 	my $actor_to_grid = {};
 	my $grid_by_row = {};
 	my $grid_by_col = {};
+	my $bounds_by_actor = {};
 	for my $actor (@actors) {
 		my $r = $self->_data->{ $actor }{row};
 		my $c = $self->_data->{ $actor }{column};
@@ -84,12 +83,17 @@ method update( $state ) {
 		push @{ $grid_by_row->{$r} }, $actor;
 		push @{ $grid_by_col->{$c} }, $actor;
 
+		my $state = $self->input->get_state( $actor );
+		$bounds_by_actor->{$actor} = $actor->bounds( $state );
 	}
 
 	my $max_height_by_row = {
 		map {
 			my @actors = @{ $grid_by_row->{$_} };
-			my $max_height = max map { $_->bounds( $state )->size->height } @actors;
+			my $max_height = max map {
+				my $actor = $_;
+				$bounds_by_actor->{$actor}->size->height;
+			} @actors;
 
 			$_ => $max_height;
 		} keys %$grid_by_row
@@ -98,7 +102,10 @@ method update( $state ) {
 	my $max_width_by_col = {
 		map {
 			my @actors = @{ $grid_by_col->{$_} };
-			my $max_width = max map { $_->bounds( $state )->size->width } @actors;
+			my $max_width = max map {
+				my $actor = $_;
+				$bounds_by_actor->{$actor}->size->width;
+			} @actors;
 
 			$_ => $max_width;
 		} keys %$grid_by_col
@@ -126,14 +133,25 @@ method update( $state ) {
 			;
 	}
 
+	my $output = Renard::Jacquard::Render::StateCollection->new;
 	for my $actor (@actors) {
-		$actor_positions{ $actor } = Renard::Yarn::Graphene::Point->new(
-			x => $col_corner->[ $actor_to_grid->{$actor}[1] ],
-			y => $row_corner->[ $actor_to_grid->{$actor}[0] ],
-		)
+		my $input_state = $self->input->get_state( $actor );
+		my $translate = Renard::Taffeta::Transform::Affine2D::Translation->new(
+			translate => [
+				$col_corner->[ $actor_to_grid->{$actor}[1] ],
+				$row_corner->[ $actor_to_grid->{$actor}[0] ],
+			],
+		);
+		my $state = Renard::Jacquard::Render::State->new(
+			transform => $translate,
+		);
+
+		$output->set_state( $actor, $input_state->compose($state) );
 	}
 
-	\%actor_positions;
+	$output;
 }
+
+with qw(Renard::Jacquard::Layout::Role::WithInputStateCollection);
 
 1;

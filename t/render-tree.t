@@ -5,85 +5,32 @@ use Renard::Incunabula::Common::Setup;
 
 use lib 't/lib';
 
-package GraphicsState {
-	use Moo;
-	use Renard::Incunabula::Common::Setup;
-
-	use Renard::Yarn::Graphene;
-	use Renard::Incunabula::Common::Types qw(InstanceOf);
-
-	has transform => (
-		is => 'ro',
-		default => sub {
-			Transform::Linear->new;
-		}
-	);
-
-	has origin_vector => (
-		is => 'ro',
-		default => sub {
-			Renard::Yarn::Graphene::Vec2->new( x => 0 , y => 0 );
-		},
-	);
-
-
-	method push_node( $node, $position ) :ReturnType(InstanceOf['GraphicsState']) {
-		my $transform = $self->transform->push_transform( $node->transform );
-		GraphicsState->new(
-			transform => $transform,
-			origin_vector => $self->origin_vector->add(
-				$position->to_vec2
-			),
-		);
-	}
-
-	method actor_coordinates_to_world_coordinates( $position ) {
-		my $world_vec = ($self->transform->matrix * $position)->to_vec2->add(
-			$self->origin_vector
-		);
-
-		my $world_pos = Renard::Yarn::Graphene::Position->new(
-			x => $world_vec->x,
-			y => $world_vec->y,
-		);
-	}
-}
-
-package Transform::Linear {
-
-	method push_transform( $transform ) z
-		Transform::Linear->new( matrix => ($self->matrix x $transform->matrix) );
-	}
-}
-
 fun get_render_tree(
 	:$root,
-	:$state = GraphicsState->new,
-	:$position = Renard::Yarn::Graphene::Point->new( x => 0 , y => 0 ) ) {
+	:$state = Renard::Jacquard::Render::State->new,
+	) {
 
 	use Carp::Always;
 	my $tree = Tree::DAG_Node->new;
-	my $new_state = $state->push_node( $root, $position );
 
 	if( ref $root->content ne 'Renard::Jacquard::Content::Null' ) {
 		my $taffeta = $root->content->as_taffeta(
-			$new_state,
-			$position,
+			$state,
 		);
 
 		$tree->attributes({
 			render => $taffeta,
 		});
 	} else {
-		my $positions = $root->layout->update( $new_state );
-
+		my $states = $root->layout->update;
 		my $children = $root->children;
+
 		for my $child (@$children) {
+			my $new_state = $states->get_state( $child );
 			$tree->add_daughter(
 				get_render_tree(
 					root     => $child,
 					state    => $new_state,
-					position => $positions->{ $child },
 				)
 			);
 		}
@@ -100,21 +47,34 @@ subtest "Build render tree" => sub {
 	use Renard::Taffeta::Style::Fill;
 	use Renard::Jacquard::Actor;
 	use Renard::Taffeta::Color::Named;
-
-	# 1. get all the positions of the actors
-	# 2. apply a transform to the root node (scaling)
+	use Renard::Jacquard::Layout::Affine2D;
+	use Renard::Jacquard::Layout::All;
+	use Renard::Jacquard::Layout::Composed;
+	use Renard::Jacquard::Render::State;
 
 	my $grid = Renard::Jacquard::Layout::AutofillGrid->new(
 		rows    => 2,
 		columns => 3,
 		intergrid_space => 10,
 	);
-	my $root = Renard::Jacquard::Actor->new( layout => $grid );
 
 	my $matrix = Renard::Yarn::Graphene::Matrix->new;
-	$matrix->init_scale( 5, 5, 1);
-	my $transform = Transform::Linear->new( matrix => $matrix );
-	$root->transform( $transform );
+	$matrix->init_scale( 8, 5, 1);
+	my $affine2d = Renard::Jacquard::Layout::Affine2D->new(
+		transform => Renard::Taffeta::Transform::Affine2D->new(
+			matrix => $matrix,
+		)
+	);
+
+	my $composed = Renard::Jacquard::Layout::Composed->new(
+		layouts => [
+			Renard::Jacquard::Layout::All->new,
+			$affine2d,
+			$grid,
+		],
+	);
+
+	my $root = Renard::Jacquard::Actor->new( layout => $composed );
 
 	my $actor_info = [
 		[ 10, 10, 'red'     ],
@@ -140,7 +100,7 @@ subtest "Build render tree" => sub {
 	}
 
 	my $render_tree = get_render_tree( root => $root );
-	use DDP; p $render_tree;
+	#use DDP; p $render_tree;
 
 	use SVG;
 	my $svg = SVG->new;
