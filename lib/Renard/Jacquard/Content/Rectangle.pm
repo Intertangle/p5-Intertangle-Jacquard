@@ -13,6 +13,12 @@ class_has taffeta_class => (
 	default => 'Renard::Taffeta::Graphics::Rectangle',
 );
 
+=method BUILDARGS
+
+Takes L<Renard::Taffeta::Graphics::Rectangle> attributes and stores them.
+
+=cut
+
 with qw(Renard::Jacquard::Content::Role::Graphics::Taffeta);
 
 1;

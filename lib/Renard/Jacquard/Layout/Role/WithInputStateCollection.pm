@@ -1,3 +1,4 @@
+use Renard::Incunabula::Common::Setup;
 package Renard::Jacquard::Layout::Role::WithInputStateCollection;
 # ABSTRACT: A role that provides an input state collection
 

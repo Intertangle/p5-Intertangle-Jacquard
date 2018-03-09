@@ -6,17 +6,28 @@ use Moo::Role;
 use Renard::Incunabula::Common::Types qw(HashRef InstanceOf Bool ClassName);
 use MooX::ClassAttribute;
 
+=begin :comment
+
 class_has taffeta_class => (
 	is => 'ro',
 	isa => ClassName,
-	default => sub { ... },
+	default => classmethod() { ... },
 );
+
+=end :comment
+
+=cut
 
 has _delegate_args => (
 	is => 'ro',
 	isa => HashRef,
 );
 
+=method bounds
+
+Returns the bounds of the content.
+
+=cut
 method bounds( $state ) :ReturnType(InstanceOf['Renard::Yarn::Graphene::Rect']) {
 	my $transformed_rect = $self->taffeta_class->new(
 		transform => $state->transform,
@@ -44,6 +55,11 @@ around BUILDARGS => fun( $orig, $class, %args ) {
 	return $class->$orig(%args);
 };
 
+=method as_taffeta
+
+Returns a Taffeta graphics object for the content.
+
+=cut
 method as_taffeta( (InstanceOf['Renard::Jacquard::Render::State']) $state, :$taffeta_args = {} ) {
 	use Clone qw(clone);
 	my %extra_args = (

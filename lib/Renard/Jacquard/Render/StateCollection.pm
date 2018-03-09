@@ -18,14 +18,29 @@ has _data => (
 	isa => HashRef,
 );
 
+=method set_state
+
+Sets the state for the given actor.
+
+=cut
 method set_state( $actor, $state ) {
 	$self->_data->{ $actor } = $state;
 }
 
+=method get_state
+
+Returns the state for the given actor.
+
+=cut
 method get_state( $actor ) {
 	return $self->_data->{ $actor };
 }
 
+=method number_of_actors
+
+Returns the number of actors in the collection.
+
+=cut
 method number_of_actors() {
 	keys %{ $self->_data };
 }

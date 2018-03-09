@@ -9,6 +9,11 @@ has _actors => (
 	default => sub { [] },
 );
 
+=method add_actor
+
+Add actor with no layout-specific options.
+
+=cut
 method add_actor($actor) {
 	push @{ $self->_actors }, $actor;
 }

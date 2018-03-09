@@ -5,11 +5,21 @@ package Renard::Jacquard::Layout::All;
 use Moo;
 use Renard::Jacquard::Render::State;
 
+=attr state
+
+The state to apply to all children.
+
+=cut
 has state => (
 	is => 'ro',
 	default => sub { Renard::Jacquard::Render::State->new },
 );
 
+=method update
+
+Update layout.
+
+=cut
 method update() {
 	my @actors = @{ $self->_actors };
 

@@ -30,6 +30,12 @@ has _tree_dag_node => (
 
 The layout to use for the children actors.
 
+Predicate: C<has_layout>
+
+=method has_layout
+
+Predicate for C<layout> attribute.
+
 =cut
 has layout => (
 	is => 'ro',

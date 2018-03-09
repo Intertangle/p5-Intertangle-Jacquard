@@ -5,6 +5,11 @@ package Renard::Jacquard::Content::Null;
 use Moo;
 use Renard::Yarn::Graphene;
 
+=method bounds
+
+The bounds for null content are empty.
+
+=cut
 method bounds( $state ) {
 	Renard::Yarn::Graphene::Rect->new(
 		origin => Renard::Yarn::Graphene::Point->new(
