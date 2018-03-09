@@ -6,10 +6,13 @@ cache:
     - maint/cpanfile-git-log
 addons:
   apt:
+    sources:
+      - deadsnakes
     packages:
       # from Alien::Graphene
       - python3-setuptools # to install meson
       - libgirepository1.0-dev
+      - python3.5  # from deadsnakes, needed for meson
 
       - libcairo2
       - aspell     # for dzil Test::PodSpelling
