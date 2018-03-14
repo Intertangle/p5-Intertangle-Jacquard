@@ -11,6 +11,9 @@ use Renard::Jacquard::Layout::All;
 use Renard::Jacquard::Layout::Composed;
 use Renard::Yarn::Graphene;
 use Renard::Jacquard::Content::Rectangle;
+use Renard::Taffeta::Color::Named;
+use Renard::Taffeta::Style::Fill;
+use Renard::Taffeta::Style::Stroke;
 
 subtest "Create a grid" => sub {
 	my $layout = Renard::Jacquard::Layout::Grid->new();
@@ -25,7 +28,6 @@ subtest "Create a grid" => sub {
 		layout => $composed,
 	);
 
-	use Carp::Always;
 	my $actors_bounds = [
 		[ 10 , 10 ], [ 10 , 10 ], [ 10 , 10 ],
 		[ 10 , 10 ], [ 20 , 10 ], [ 10 , 10 ],
@@ -38,7 +40,13 @@ subtest "Create a grid" => sub {
 		my $actor = Renard::Jacquard::Actor->new(
 			content => Renard::Jacquard::Content::Rectangle->new(
 				width  => $actors_bounds->[$item_num][0],
-				height => $actors_bounds->[$item_num][1]
+				height => $actors_bounds->[$item_num][1],
+				fill => Renard::Taffeta::Style::Fill->new(
+					color => Renard::Taffeta::Color::Named->new( name => 'svg:red' ),
+				),
+				stroke => Renard::Taffeta::Style::Stroke->new(
+					color => Renard::Taffeta::Color::Named->new( name => 'svg:blue' ),
+				),
 			),
 		);
 
@@ -78,8 +86,14 @@ subtest "Create a grid" => sub {
 	is $get_point->($actors[ 9]), [  0, 50 ], 'position of actor 9';
 	is $get_point->($actors[10]), [ 10, 50 ], 'position of actor 10';
 
-	use RenderTree;
-	RenderTree->render_to_svg($container, path('test.svg'));
+
+
+	use Renard::Jacquard::Render::GenerateTree;
+	Renard::Jacquard::Render::GenerateTree
+		->render_tree_to_svg(
+			Renard::Jacquard::Render::GenerateTree->get_render_tree(
+				root => $container ),
+			'test.svg' );
 };
 
 done_testing;

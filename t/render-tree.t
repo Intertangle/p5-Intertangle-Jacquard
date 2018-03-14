@@ -5,39 +5,6 @@ use Renard::Incunabula::Common::Setup;
 
 use lib 't/lib';
 
-fun get_render_tree(
-	:$root,
-	:$state = Renard::Jacquard::Render::State->new,
-	) {
-
-	use Carp::Always;
-	my $tree = Tree::DAG_Node->new;
-
-	if( ref $root->content ne 'Renard::Jacquard::Content::Null' ) {
-		my $taffeta = $root->content->as_taffeta(
-			$state,
-		);
-
-		$tree->attributes({
-			render => $taffeta,
-		});
-	} else {
-		my $states = $root->layout->update;
-		my $children = $root->children;
-
-		for my $child (@$children) {
-			my $new_state = $states->get_state( $child );
-			$tree->add_daughter(
-				get_render_tree(
-					root     => $child,
-					state    => $new_state,
-				)
-			);
-		}
-	}
-
-	$tree;
-}
 
 use Renard::Jacquard::Content::Rectangle;
 
@@ -50,7 +17,7 @@ subtest "Build render tree" => sub {
 	use Renard::Jacquard::Layout::Affine2D;
 	use Renard::Jacquard::Layout::All;
 	use Renard::Jacquard::Layout::Composed;
-	use Renard::Jacquard::Render::State;
+	use Renard::Jacquard::Render::GenerateTree;
 
 	my $grid = Renard::Jacquard::Layout::AutofillGrid->new(
 		rows    => 2,
@@ -99,26 +66,12 @@ subtest "Build render tree" => sub {
 		$root->add_child( $actor );
 	}
 
-	my $render_tree = get_render_tree( root => $root );
-	#use DDP; p $render_tree;
+	my $render_tree = Renard::Jacquard::Render::GenerateTree
+		->get_render_tree( root => $root );
 
-	use SVG;
-	my $svg = SVG->new;
-	$render_tree->walk_down({
-		callback => fun( $node ) {
+	Renard::Jacquard::Render::GenerateTree
+		->render_tree_to_svg( $render_tree, 'render-tree.svg' );
 
-			if( exists $node->attributes->{render} ) {
-				$node->attributes->{render}->render_svg( $svg );
-			}
-
-			return 1;
-		},
-	});
-
-	path('render-tree.svg')->spew_utf8($svg->xmlify);
-
-	#use DDP; p $root->transform->matrix;
-	#use DDP; p $root, class => { expand => 'all' };
 	pass;
 };
 
