@@ -60,7 +60,18 @@ Retrieves the bounds of the actor via the content.
 
 =cut
 method bounds( $state ) {
-	$self->content->bounds( $state );
+	if( $self->number_of_children == 0 ) {
+		return $self->content->bounds( $state );
+	} else {
+		my $states = $self->layout->update( state => $state );
+
+		my @bounds = map { $_->bounds( $states->get_state($_) ) } @{ $self->children };
+		my $rect = shift @bounds;
+		while( @bounds ) {
+			$rect = $rect->union( shift @bounds );
+		}
+		return $rect;
+	}
 }
 
 =method add_child
