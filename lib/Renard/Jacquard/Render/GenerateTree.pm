@@ -7,7 +7,13 @@ use Renard::Jacquard::Render::State;
 use Path::Tiny;
 use Renard::Jacquard::Layout::All;
 use Renard::Jacquard::Layout::Composed;
+use Tree::DAG_Node;
 
+=method get_render_tree
+
+Returns a L<Tree::DAG_Node> of renderable objects.
+
+=cut
 method get_render_tree(
 	:$root,
 	:$state = Renard::Jacquard::Render::State->new,
@@ -49,6 +55,11 @@ method get_render_tree(
 	$tree;
 }
 
+=method render_tree_to_svg
+
+Renders the result of C<get_render_tree> to an SVG file.
+
+=cut
 method render_tree_to_svg( $render_tree, $path ) {
 	require SVG;
 	my $svg = SVG->new;
