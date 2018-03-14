@@ -51,6 +51,17 @@ method compose( $state ) {
 	);
 }
 
+=method compose_premultiply
+
+Compose with another state (premultiply).
+
+=cut
+method compose_premultiply( $state ) {
+	Renard::Jacquard::Render::State->new(
+		transform => ( $self->transform->compose_premultiply( $state->transform ) ),
+	);
+}
+
 =method actor_coordinates_to_world_coordinates
 
 This needs to be tested.

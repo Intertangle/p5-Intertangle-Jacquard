@@ -5,12 +5,20 @@ use Test::Most tests => 1;
 use Renard::Incunabula::Common::Setup;
 use Renard::Jacquard::Actor;
 use Renard::Jacquard::Layout::Fixed;
+use Renard::Jacquard::Layout::All;
+use Renard::Jacquard::Layout::Composed;
 
 subtest "Create a fixed layout" => sub {
 	my $layout = Renard::Jacquard::Layout::Fixed->new();
+	my $composed = Renard::Jacquard::Layout::Composed->new(
+		layouts => [
+			Renard::Jacquard::Layout::All->new(),
+			$layout,
+		],
+	);
 
 	my $container = Renard::Jacquard::Actor->new(
-		layout => $layout,
+		layout => $composed,
 	);
 
 	my $actors_positions = [
@@ -34,13 +42,19 @@ subtest "Create a fixed layout" => sub {
 		);
 	}
 
-	my $positions = $container->layout->update;
+	my $states = $container->layout->update;
 
-	is scalar keys %$positions, 3, 'have the right amount of actors';
+	is $states->number_of_actors, 3, 'have the right amount of actors';
 
-	is $positions->{$actors[0]}, [0, 0], 'position of actor 1';
-	is $positions->{$actors[1]}, [5, 5], 'position of actor 2';
-	is $positions->{$actors[2]}, [10, 3], 'position of actor 3';
+	my $get_point = sub {
+		my ($actor) = @_;
+		$states->get_state($actor)
+			->transform
+			->apply_to_point([0,0]);
+	};
+	is $get_point->($actors[0]), [0, 0], 'position of actor 1';
+	is $get_point->($actors[1]), [5, 5], 'position of actor 2';
+	is $get_point->($actors[2]), [10, 3], 'position of actor 3';
 };
 
 done_testing;
