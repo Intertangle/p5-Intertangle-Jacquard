@@ -68,7 +68,7 @@ method add_actor( $actor, (PositiveOrZeroInt) :$row, (PositiveOrZeroInt) :$colum
 Layout the actors.
 
 =cut
-method update() {
+method update( :$state ) {
 	my @actors = keys %{ $self->_data };
 
 	my $actor_to_grid = {};
@@ -83,7 +83,7 @@ method update() {
 		push @{ $grid_by_row->{$r} }, $actor;
 		push @{ $grid_by_col->{$c} }, $actor;
 
-		my $state = $self->input->get_state( $actor );
+		my $state = defined $state ? $state : $self->input->get_state( $actor );
 		$bounds_by_actor->{$actor} = $actor->bounds( $state );
 	}
 
@@ -135,7 +135,7 @@ method update() {
 
 	my $output = Renard::Jacquard::Render::StateCollection->new;
 	for my $actor (@actors) {
-		my $input_state = $self->input->get_state( $actor );
+		my $input_state = defined $state ? $state : $self->input->get_state( $actor );
 		my $translate = Renard::Taffeta::Transform::Affine2D::Translation->new(
 			translate => [
 				$col_corner->[ $actor_to_grid->{$actor}[1] ],

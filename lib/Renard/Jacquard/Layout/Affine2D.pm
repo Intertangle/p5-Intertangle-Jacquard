@@ -20,12 +20,12 @@ has transform => (
 Update layout.
 
 =cut
-method update() :ReturnType(InstanceOf['Renard::Jacquard::Render::StateCollection']) {
+method update( :$state ) :ReturnType(InstanceOf['Renard::Jacquard::Render::StateCollection']) {
 	my @actors = @{ $self->_actors };
 
 	my $output = Renard::Jacquard::Render::StateCollection->new;
 	for my $actor (@actors) {
-		my $input_state = $self->input->get_state($actor);
+		my $input_state = defined $state ? $state : $self->input->get_state($actor);
 		$output->set_state( $actor,
 			Renard::Jacquard::Render::State->new(
 				transform => $input_state->transform->compose( $self->transform ),

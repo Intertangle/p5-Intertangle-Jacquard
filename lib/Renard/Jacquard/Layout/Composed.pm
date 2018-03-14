@@ -32,12 +32,12 @@ method add_actor(@) {
 Update layout.
 
 =cut
-method update() {
-	my $output = $self->layouts->[0]->update();
+method update(@) {
+	my $output = $self->layouts->[0]->update(@_);
 	my @layouts = @{ $self->layouts };
 	for my $layout ( @layouts[1..$#layouts] ) {
 		$layout->input( $output );
-		$output = $layout->update()
+		$output = $layout->update();
 	}
 
 	$output;

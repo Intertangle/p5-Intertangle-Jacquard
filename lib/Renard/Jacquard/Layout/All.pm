@@ -20,12 +20,13 @@ has state => (
 Update layout.
 
 =cut
-method update() {
+method update( :$state ) {
 	my @actors = @{ $self->_actors };
 
+	my $state = defined $state ? $state : $self->state;
 	my $output = Renard::Jacquard::Render::StateCollection->new;
 	for my $actor (@actors) {
-		$output->set_state( $actor, $self->state );
+		$output->set_state( $actor, $state );
 	}
 
 	$output;
