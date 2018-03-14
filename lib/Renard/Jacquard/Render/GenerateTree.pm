@@ -63,16 +63,19 @@ Renders the result of C<get_render_tree> to an SVG file.
 method render_tree_to_svg( $render_tree, $path ) {
 	require SVG;
 	my $svg = SVG->new;
-	$render_tree->walk_down({
-		callback => fun( $node ) {
 
-			if( exists $node->attributes->{render} ) {
-				$node->attributes->{render}->render_svg( $svg );
-			}
+	fun walker( $node, $svg ) {
+		my @daughters = $node->daughters;
+		if( exists $node->attributes->{render} ) {
+			my $el = $node->attributes->{render}->render_svg( $svg );
+		}
+		my $group = @daughters > 1 ? $svg->group : $svg ;
+		for my $daughter (@daughters) {
+			walker( $daughter, $group );
+		}
+	};
 
-			return 1;
-		},
-	});
+	walker( $render_tree, $svg->group );
 
 	path($path)->spew_utf8($svg->xmlify);
 }
