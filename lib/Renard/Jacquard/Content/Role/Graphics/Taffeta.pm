@@ -5,6 +5,7 @@ package Renard::Jacquard::Content::Role::Graphics::Taffeta;
 use Moo::Role;
 use Renard::Incunabula::Common::Types qw(HashRef InstanceOf Bool ClassName);
 use MooX::ClassAttribute;
+use Renard::Jacquard::Render::State;
 
 =begin :comment
 
@@ -60,7 +61,9 @@ around BUILDARGS => fun( $orig, $class, %args ) {
 Returns a Taffeta graphics object for the content.
 
 =cut
-method as_taffeta( (InstanceOf['Renard::Jacquard::Render::State']) $state, :$taffeta_args = {} ) {
+method as_taffeta(
+	(InstanceOf['Renard::Jacquard::Render::State']) :$state = Renard::Jacquard::Render::State->new,
+	:$taffeta_args = {} ) {
 	use Clone qw(clone);
 	my %extra_args = (
 		transform => $state->transform,
