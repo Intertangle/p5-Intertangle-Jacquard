@@ -8,6 +8,7 @@ use Path::Tiny;
 use Renard::Jacquard::Layout::All;
 use Renard::Jacquard::Layout::Composed;
 use Tree::DAG_Node;
+use Module::Load;
 
 =method get_render_tree
 
@@ -61,7 +62,7 @@ Renders the result of C<get_render_tree> to an SVG file.
 
 =cut
 method render_tree_to_svg( $render_tree, $path  ) {
-	require SVG;
+	load SVG;
 	my $svg = SVG->new;
 
 	method walker( $node, $svg ) {
@@ -82,7 +83,7 @@ method render_tree_to_svg( $render_tree, $path  ) {
 }
 
 method _add_debug_tooltips( $node, $element ) {
-	require DDP;
+	load 'DDP';
 	my %options = (
 		multiline => 0,
 		colored => 0,
