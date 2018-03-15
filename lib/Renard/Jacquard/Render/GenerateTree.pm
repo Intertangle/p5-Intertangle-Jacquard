@@ -65,7 +65,7 @@ method render_tree_to_svg( $render_tree, $path  ) {
 	load SVG;
 	my $svg = SVG->new;
 
-	method walker( $node, $svg ) {
+	method _walker( $node, $svg ) {
 		my @daughters = $node->daughters;
 		if( exists $node->attributes->{render} ) {
 			my $el = $node->attributes->{render}->render_svg( $svg );
@@ -73,11 +73,11 @@ method render_tree_to_svg( $render_tree, $path  ) {
 		}
 		my $group = @daughters > 1 ? $svg->group : $svg ;
 		for my $daughter (@daughters) {
-			$self->walker( $daughter, $group );
+			$self->_walker( $daughter, $group );
 		}
 	};
 
-	$self->walker( $render_tree, $svg->group );
+	$self->_walker( $render_tree, $svg->group );
 
 	path($path)->spew_utf8($svg->xmlify);
 }
