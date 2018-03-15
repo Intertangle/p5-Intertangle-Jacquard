@@ -1,8 +1,7 @@
 #!/usr/bin/env perl
 
 use Test::Most tests => 1;
-
-use lib 't/lib';
+use Test::Needs qw(SVG Data::Printer);
 
 use Renard::Incunabula::Common::Setup;
 use Renard::Jacquard::Actor;

@@ -2,8 +2,6 @@
 
 use Test::Most tests => 2;
 
-use lib 't/lib';
-
 use Renard::Incunabula::Common::Setup;
 use Renard::Jacquard::Actor;
 use Renard::Yarn::Graphene;
