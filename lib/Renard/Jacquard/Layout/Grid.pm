@@ -71,10 +71,13 @@ Layout the actors.
 method update( :$state ) {
 	my @actors = keys %{ $self->_data };
 
+	$self->_logger->tracef( "Updating %s: got ", $self  );
+
 	my $actor_to_grid = {};
 	my $grid_by_row = {};
 	my $grid_by_col = {};
-	my $bounds_by_actor = {};
+	tie my %bounds_by_actor, 'Tie::RefHash';
+	my $bounds_by_actor = \%bounds_by_actor;
 	for my $actor (@actors) {
 		my $r = $self->_data->{ $actor }{row};
 		my $c = $self->_data->{ $actor }{column};
@@ -152,6 +155,9 @@ method update( :$state ) {
 	$output;
 }
 
-with qw(Renard::Jacquard::Layout::Role::WithInputStateCollection);
+with qw(
+	Renard::Jacquard::Layout::Role::WithInputStateCollection
+	MooX::Role::Logger
+);
 
 1;

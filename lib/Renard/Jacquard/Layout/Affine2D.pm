@@ -25,6 +25,7 @@ Update layout.
 =cut
 method update( :$state ) :ReturnType(InstanceOf['Renard::Jacquard::Render::StateCollection']) {
 	my @actors = @{ $self->_actors };
+	$self->_logger->trace( "Updating $self"  );
 
 	my $output = Renard::Jacquard::Render::StateCollection->new;
 	for my $actor (@actors) {
@@ -42,6 +43,7 @@ method update( :$state ) :ReturnType(InstanceOf['Renard::Jacquard::Render::State
 with qw(
 	Renard::Jacquard::Layout::Role::WithInputStateCollection
 	Renard::Jacquard::Layout::Role::AddActorNoOptions
+	MooX::Role::Logger
 );
 
 1;

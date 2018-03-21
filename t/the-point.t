@@ -15,6 +15,13 @@ use Renard::Taffeta::Color::Named;
 use Renard::Taffeta::Style::Fill;
 use Renard::Taffeta::Style::Stroke;
 
+#use Log::Any::Adapter;
+#Log::Any::Adapter->set('Stdout',
+	##min_level => 'trace',
+	##use_color => 1, # force color even when not interactive
+	## stderr    => 0, # print to STDOUT instead of the default STDERR
+#);
+
 fun create_page_node( :$fill = 'svg:black' ) {
 	my $page_group = Actor->new(
 		layout => Fixed->new

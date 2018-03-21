@@ -33,7 +33,6 @@ method update( :$state ) {
 }
 
 with qw(
-	Renard::Jacquard::Layout::Role::WithInputStateCollection
 	Renard::Jacquard::Layout::Role::AddActorNoOptions
 );
 

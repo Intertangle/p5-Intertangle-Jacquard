@@ -69,7 +69,7 @@ method render_tree_to_svg( $render_tree, $path  ) {
 		my @daughters = $node->daughters;
 		if( exists $node->attributes->{render} ) {
 			my $el = $node->attributes->{render}->render_svg( $svg );
-			$self->_add_debug_tooltips( $node, $el );
+			#$self->_add_debug_tooltips( $node, $el );
 		}
 		my $group = @daughters > 1 ? $svg->group : $svg ;
 		for my $daughter (@daughters) {

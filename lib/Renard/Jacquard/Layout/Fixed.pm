@@ -41,6 +41,7 @@ Layout the actors.
 =cut
 method update( :$state ) {
 	my @actors = keys %{ $self->_data };
+	$self->_logger->trace( "Updating $self"  );
 
 	my $output = Renard::Jacquard::Render::StateCollection->new;
 	for my $actor (@actors) {
@@ -62,6 +63,9 @@ method update( :$state ) {
 	$output;
 }
 
-with qw(Renard::Jacquard::Layout::Role::WithInputStateCollection);
+with qw(
+	Renard::Jacquard::Layout::Role::WithInputStateCollection
+	MooX::Role::Logger
+);
 
 1;

@@ -34,6 +34,8 @@ Update layout.
 =cut
 method update(@) {
 	my $output = $self->layouts->[0]->update(@_);
+	$self->_logger->trace( "Updating $self" );
+
 	my @layouts = @{ $self->layouts };
 	for my $layout ( @layouts[1..$#layouts] ) {
 		$layout->input( $output );
@@ -42,5 +44,9 @@ method update(@) {
 
 	$output;
 }
+
+with qw(
+	MooX::Role::Logger
+);
 
 1;
