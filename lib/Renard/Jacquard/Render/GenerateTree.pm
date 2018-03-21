@@ -22,7 +22,7 @@ method get_render_tree(
 
 	my $tree = Tree::DAG_Node->new;
 
-	if( ref $root->content ne 'Renard::Jacquard::Content::Null' ) {
+	if( ! $root->is_group_node ) {
 		my $taffeta = $root->content->as_taffeta(
 			state => $state,
 		);

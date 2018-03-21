@@ -117,4 +117,15 @@ method parent() {
 	return $self->_tree_dag_node->mother;
 }
 
+=method is_group_node
+
+Returns a C<Bool> that is true if the node is a group node.
+
+=cut
+method is_group_node() {
+	ref $self->content eq 'Renard::Jacquard::Content::Null'
+}
+
+with qw(MooX::Role::Logger);
+
 1;
