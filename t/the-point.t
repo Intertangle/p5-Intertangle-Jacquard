@@ -118,7 +118,7 @@ subtest "What is the point?" => sub {
 
 	my $left  = composed_affine_actor( matrix_xy => { xx => 2   , yy => 0.5 } );
 	my $right = composed_affine_actor( matrix_xy => { xx => 1   , yy => 0.8 } );
-	my $one   = composed_affine_actor( matrix_xy => { xx => 2.5 , yy => 1.0 } );
+	my $one   = composed_affine_actor( matrix_xy => { xx => 2.5 , yy => 0.7 } );
 	my $two   = composed_affine_actor( matrix_xy => { xx => 1   , yy => 1.0 } );
 
 	$root->add_child( $left );
