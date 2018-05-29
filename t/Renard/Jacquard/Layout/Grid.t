@@ -14,6 +14,8 @@ use Renard::Taffeta::Color::Named;
 use Renard::Taffeta::Style::Fill;
 use Renard::Taffeta::Style::Stroke;
 
+use Path::Tiny;
+
 subtest "Create a grid" => sub {
 	my $layout = Renard::Jacquard::Layout::Grid->new();
 	my $composed = Renard::Jacquard::Layout::Composed->new(
@@ -88,11 +90,12 @@ subtest "Create a grid" => sub {
 
 
 	use Renard::Jacquard::Render::GenerateTree;
+	my $file = Path::Tiny->tempfile;
 	Renard::Jacquard::Render::GenerateTree
 		->render_tree_to_svg(
 			Renard::Jacquard::Render::GenerateTree->get_render_tree(
 				root => $container ),
-			'test.svg' );
+			$file );
 };
 
 done_testing;

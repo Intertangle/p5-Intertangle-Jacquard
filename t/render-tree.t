@@ -6,6 +6,7 @@ use Test::Needs qw(SVG Data::Printer);
 use Renard::Incunabula::Common::Setup;
 
 use Renard::Jacquard::Content::Rectangle;
+use Path::Tiny;
 
 
 subtest "Build render tree" => sub {
@@ -68,8 +69,9 @@ subtest "Build render tree" => sub {
 	my $render_tree = Renard::Jacquard::Render::GenerateTree
 		->get_render_tree( root => $root );
 
+	my $file = Path::Tiny->tempfile;
 	Renard::Jacquard::Render::GenerateTree
-		->render_tree_to_svg( $render_tree, 'render-tree.svg' );
+		->render_tree_to_svg( $render_tree, $file );
 
 	pass;
 };
