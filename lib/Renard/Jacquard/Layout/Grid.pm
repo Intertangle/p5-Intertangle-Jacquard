@@ -2,20 +2,53 @@ use Renard::Incunabula::Common::Setup;
 package Renard::Jacquard::Layout::Grid;
 # ABSTRACT: A grid layout
 
-use Renard::Incunabula::Common::Types qw(PositiveOrZeroInt PositiveInt);
+use Renard::Incunabula::Common::Types qw(PositiveOrZeroInt PositiveInt ArrayRef);
 
 use Moo;
 use List::AllUtils qw(max);
+use MooX::HandlesVia;
+use MooseX::HandlesConstructor;
 use Renard::Taffeta::Transform::Affine2D::Translation;
+
+=method BUILD
+
+Supports setting handles C<intergrid_space_rows>, C<intergrid_space_columns> at
+construction time in addition to the other attributes.
+
+=cut
+
 
 =attr intergrid_space
 
-How much space to add between grids spots.
+How much space to add between grid rows/columns.
+
+Either use a single number to set both rows and columns or a tuple to set both independently.
+
+=attr intergrid_space_rows
+
+How much space to add between grid rows.
+
+Implemented as a handle for C<intergrid_space>, but can be set at construction time.
+
+=attr intergrid_space_columns
+
+How much space to add between grid columns.
+
+Implemented as a handle for C<intergrid_space>, but can be set at construction time.
 
 =cut
 has intergrid_space => (
 	is => 'ro',
-	default => sub { 0 },
+	isa => ArrayRef,
+	coerce => sub {
+		@_ == 1 && ! ref $_[0] ?  [ $_[0], $_[0] ] : $_[0]
+	},
+	default => sub { [ 0, 0 ] },
+	handles_via => 'Array',
+	handles => {
+		intergrid_space_rows    => [ accessor => 0 ],
+		intergrid_space_columns => [ accessor => 1 ],
+	},
 );
 
 =attr mingrid_space
@@ -114,7 +147,6 @@ method update( :$state ) {
 		} keys %$grid_by_col
 	};
 
-	my $intergrid_space = $self->intergrid_space;
 	my $mingrid_space = $self->mingrid_space;
 
 	my $grid_corner = {};
@@ -122,7 +154,7 @@ method update( :$state ) {
 	$self->_rows(1 + max keys %$max_height_by_row);
 	for my $row (1..$self->_rows - 1) {
 		push @$row_corner, $row_corner->[-1]
-			+ $intergrid_space
+			+ $self->intergrid_space_rows
 			+ $max_height_by_row->{$row - 1} // $mingrid_space
 			;
 	}
@@ -131,7 +163,7 @@ method update( :$state ) {
 	$self->_columns(1 + max keys %$max_width_by_col);
 	for my $col (1..$self->_columns - 1) {
 		push @$col_corner, $col_corner->[-1]
-			+ $intergrid_space
+			+ $self->intergrid_space_columns
 			+ $max_width_by_col->{$col - 1} // $mingrid_space
 			;
 	}
