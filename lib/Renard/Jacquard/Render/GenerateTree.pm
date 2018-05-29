@@ -33,8 +33,11 @@ method get_render_tree(
 	} else {
 		my $layout;
 		my $states;
+		my $state_pushed = Renard::Jacquard::Render::State->new(
+			coordinate_system_transform => $state->transform,
+		);
 		#if( ref $root->layout ne 'Renard::Jacquard::Layout::Composed' ) {
-			$states = $root->layout->update( state => $state );
+			$states = $root->layout->update( state => $state_pushed );
 		#} else {
 			#$states = $root->layout->update;
 		#}

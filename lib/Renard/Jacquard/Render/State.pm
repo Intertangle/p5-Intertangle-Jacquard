@@ -2,19 +2,31 @@ use Renard::Incunabula::Common::Setup;
 package Renard::Jacquard::Render::State;
 # ABSTRACT: A state that can be used for rendering content
 
-use Moo;
+use Mu;
 
 use Renard::Yarn::Graphene;
 use Renard::Incunabula::Common::Types qw(InstanceOf);
 
 use Renard::Taffeta::Transform::Affine2D;
 
-=method transform
+=method geometry_transform
 
-A transform for the current state.
+The geometry transform is meant to change the size and shape of the content.
 
 =cut
-has transform => (
+has geometry_transform => (
+	is => 'ro',
+	default => sub {
+		Renard::Taffeta::Transform::Affine2D->new;
+	}
+);
+
+=method coordinate_system_transform
+
+The coordinate system transform is meant to change the location of the content.
+
+=cut
+has coordinate_system_transform => (
 	is => 'ro',
 	default => sub {
 		Renard::Taffeta::Transform::Affine2D->new;
@@ -47,9 +59,21 @@ Compose with another state.
 =cut
 method compose( $state ) {
 	Renard::Jacquard::Render::State->new(
-		transform => ( $self->transform->compose( $state->transform ) ),
+		geometry_transform => (
+			$self->geometry_transform
+				->compose_premultiply( $state->geometry_transform )
+		),
+
+		coordinate_system_transform => (
+			$self->coordinate_system_transform
+				->compose_premultiply( $state->coordinate_system_transform )
+		)
 	);
 }
+
+lazy transform => method() {
+	$self->geometry_transform->compose( $self->coordinate_system_transform );
+};
 
 =method compose_premultiply
 

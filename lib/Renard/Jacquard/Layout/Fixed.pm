@@ -54,10 +54,10 @@ method update( :$state ) {
 			],
 		);
 		my $state = Renard::Jacquard::Render::State->new(
-			transform => $translate,
+			geometry_transform => $translate,
 		);
 
-		$output->set_state( $actor, $input_state->compose_premultiply($state) );
+		$output->set_state( $actor, $input_state->compose($state) );
 	}
 
 	$output;

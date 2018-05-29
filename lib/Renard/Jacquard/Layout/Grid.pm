@@ -178,7 +178,7 @@ method update( :$state ) {
 			],
 		);
 		my $state = Renard::Jacquard::Render::State->new(
-			transform => $translate,
+			coordinate_system_transform => $translate,
 		);
 
 		$output->set_state( $actor, $input_state->compose($state) );

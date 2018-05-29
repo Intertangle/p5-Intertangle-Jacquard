@@ -18,6 +18,21 @@ has transform => (
 	},
 );
 
+=method geometry_transform
+
+  method geometry_transform( :$state )
+
+Returns a new state that only applies the C<transform> for this layout and
+stores it as the new geometry transform.
+
+=cut
+method geometry_transform( :$state ) {
+	Renard::Jacquard::Render::State->new(
+		geometry_transform => $state->transform->compose( $self->transform ),
+	)
+}
+
+
 =method update
 
 Update layout.
@@ -31,8 +46,8 @@ method update( :$state ) :ReturnType(InstanceOf['Renard::Jacquard::Render::State
 	for my $actor (@actors) {
 		my $input_state = defined $state ? $state : $self->input->get_state($actor);
 		$output->set_state( $actor,
-			Renard::Jacquard::Render::State->new(
-				transform => $input_state->transform->compose( $self->transform ),
+			$input_state->compose(
+				$self->geometry_transform( state => $input_state )
 			)
 		);
 	}
@@ -41,6 +56,7 @@ method update( :$state ) :ReturnType(InstanceOf['Renard::Jacquard::Render::State
 }
 
 with qw(
+	Renard::Jacquard::Layout::Role::GeometryTransformable
 	Renard::Jacquard::Layout::Role::WithInputStateCollection
 	Renard::Jacquard::Layout::Role::AddActorNoOptions
 	MooX::Role::Logger
