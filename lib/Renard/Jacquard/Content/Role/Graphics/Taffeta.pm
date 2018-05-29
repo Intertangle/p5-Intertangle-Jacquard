@@ -29,7 +29,7 @@ has _delegate_args => (
 Returns the bounds of the content.
 
 =cut
-method bounds( $state ) :ReturnType(InstanceOf['Renard::Yarn::Graphene::Rect']) {
+method bounds( $state = Renard::Jacquard::Render::State->new ) :ReturnType(InstanceOf['Renard::Yarn::Graphene::Rect']) {
 	my $transformed_rect = $self->taffeta_class->new(
 		transform => $state->transform,
 		%{ $self->_delegate_args },
