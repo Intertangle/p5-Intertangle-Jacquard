@@ -1,0 +1,18 @@
+#!perl
+# ABSTRACT: run debugger on C<ThePoint.pm>
+# PODNAME: run-debugger
+
+use Modern::Perl;
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use lib "$FindBin::Bin/../xlib";
+use lib "$FindBin::Bin/../t/lib";
+
+use Renard::Jacquard::Debugger::GUI;
+use ThePoint;
+
+my ($root, $top) = ThePoint->tree;
+my $gui = Renard::Jacquard::Debugger::GUI->new;
+$gui->main_window->load_tree( $root );
+$gui->run;
