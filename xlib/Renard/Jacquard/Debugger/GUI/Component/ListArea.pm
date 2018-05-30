@@ -7,6 +7,7 @@ use Object::Util;
 use Glib::Object::Subclass
 	'Gtk3::Bin';
 use Glib qw(TRUE FALSE);
+use Module::Load;
 
 =attr list_box
 
@@ -53,7 +54,8 @@ callback on_updated_selection_cb($rendering, $self) {
 		my $row = Gtk3::ListBoxRow->new;
 		my $box = Gtk3::Box->new( 'horizontal', 0 );
 
-		use DDP; my $str = np($node->attributes, colored => 0 );
+		load 'DDP';
+		my $str = Data::Printer::np($node->attributes, colored => 0 );
 		$box->add( Gtk3::Label->new( $node->address . $str ) );
 
 		$row->add($box);
