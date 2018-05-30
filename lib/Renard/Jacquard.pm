@@ -2,6 +2,8 @@ use Renard::Incunabula::Common::Setup;
 package Renard::Jacquard;
 # ABSTRACT: A high-level structured graphics library
 
+use MooX::Role::Logger ();
+
 1;
 __END__
 

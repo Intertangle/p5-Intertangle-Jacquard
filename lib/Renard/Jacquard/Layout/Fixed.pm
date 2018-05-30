@@ -7,6 +7,9 @@ use Renard::Incunabula::Common::Types qw(PositiveOrZeroNum);
 use Moo;
 use Tie::RefHash;
 use Renard::Yarn::Graphene;
+use Renard::Jacquard::Render::StateCollection;
+use Renard::Taffeta::Transform::Affine2D;
+use Renard::Taffeta::Transform::Affine2D::Translation;
 
 =attr _data
 
@@ -36,21 +39,33 @@ method add_actor( $actor, (PositiveOrZeroNum) :$x, (PositiveOrZeroNum) :$y ) {
 Layout the actors.
 
 =cut
-method update() {
+method update( :$state ) {
 	my @actors = keys %{ $self->_data };
-	my %actor_positions;
-	tie %actor_positions, 'Tie::RefHash';
+	$self->_logger->trace( "Updating $self"  );
 
-
+	my $output = Renard::Jacquard::Render::StateCollection->new;
 	for my $actor (@actors) {
-		$actor_positions{ $actor } = Renard::Yarn::Graphene::Point->new(
-			x => $self->_data->{$actor}{x},
-			y => $self->_data->{$actor}{y},
-		)
+		my $input_state = defined $state ? $state : $self->input->get_state($actor);
+
+		my $translate = Renard::Taffeta::Transform::Affine2D::Translation->new(
+			translate => [
+				$self->_data->{$actor}{x},
+				$self->_data->{$actor}{y},
+			],
+		);
+		my $state = Renard::Jacquard::Render::State->new(
+			geometry_transform => $translate,
+		);
+
+		$output->set_state( $actor, $input_state->compose($state) );
 	}
 
-	\%actor_positions;
+	$output;
 }
 
+with qw(
+	Renard::Jacquard::Layout::Role::WithInputStateCollection
+	MooX::Role::Logger
+);
 
 1;

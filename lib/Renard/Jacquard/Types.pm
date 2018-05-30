@@ -5,6 +5,7 @@ package Renard::Jacquard::Types;
 use Type::Library 0.008 -base,
 	-declare => [qw(
 		Actor
+		State
 	)];
 use Type::Utils -all;
 
@@ -17,5 +18,13 @@ A type for any reference that extends L<Renard::Jacquard::Actor>.
 =cut
 class_type "Actor",
 	{ class => "Renard::Jacquard::Actor" };
+
+=type State
+
+A type for any reference that extends L<Renard::Jacquard::Render::State>.
+
+=cut
+class_type "State",
+	{ class => "Renard::Jacquard::Render::State" };
 
 1;

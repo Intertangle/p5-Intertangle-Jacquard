@@ -8,6 +8,8 @@ use Renard::Jacquard::Types qw(Actor);
 use Renard::Yarn::Types qw(Size);
 use Tree::DAG_Node;
 
+use Renard::Jacquard::Content::Null;
+
 =attr _tree_dag_node
 
 Use delegation to C<Tree::DAG_Node> to build scene graph.
@@ -28,21 +30,49 @@ has _tree_dag_node => (
 
 The layout to use for the children actors.
 
+Predicate: C<has_layout>
+
+=method has_layout
+
+Predicate for C<layout> attribute.
+
 =cut
 has layout => (
 	is => 'ro',
+	predicate => 1,
 );
 
-=attr bounds
+=attr content
 
-The bounds for the actor.
+The content for the actor.
 
 =cut
-has bounds => (
+has content => (
 	is => 'ro',
-	isa => Size,
-	coerce => 1,
+	default => sub { Renard::Jacquard::Content::Null->new },
 );
+
+=method bounds
+
+  method bounds( $state )
+
+Retrieves the bounds of the actor via the content.
+
+=cut
+method bounds( $state ) {
+	if( $self->number_of_children == 0 ) {
+		return $self->content->bounds( $state );
+	} else {
+		my $states = $self->layout->update( state => $state );
+
+		my @bounds = map { $_->bounds( $states->get_state($_) ) } @{ $self->children };
+		my $rect = shift @bounds;
+		while( @bounds ) {
+			$rect = $rect->union( shift @bounds );
+		}
+		return $rect;
+	}
+}
 
 =method add_child
 
@@ -53,8 +83,10 @@ method add_child( (Actor) $actor, %options  ) {
 	$self->_tree_dag_node->add_daughter(
 		$actor->_tree_dag_node
 	);
-	if( exists $options{layout} && defined $options{layout} ) {
-		$self->layout->add_actor( $actor, %{ $options{layout} } );
+	if( $self->has_layout ) {
+		$self->layout->add_actor( $actor,
+			exists $options{layout} ? %{ $options{layout} } : ()
+		);
 	}
 }
 
@@ -84,5 +116,16 @@ Returns the parent of this actor.
 method parent() {
 	return $self->_tree_dag_node->mother;
 }
+
+=method is_group_node
+
+Returns a C<Bool> that is true if the node is a group node.
+
+=cut
+method is_group_node() {
+	ref $self->content eq 'Renard::Jacquard::Content::Null'
+}
+
+with qw(MooX::Role::Logger);
 
 1;

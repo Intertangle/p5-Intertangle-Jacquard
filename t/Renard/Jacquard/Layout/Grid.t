@@ -1,19 +1,32 @@
 #!/usr/bin/env perl
 
 use Test::Most tests => 1;
-
-use lib 't/lib';
+use Test::Needs qw(SVG Data::Printer);
 
 use Renard::Incunabula::Common::Setup;
 use Renard::Jacquard::Actor;
 use Renard::Jacquard::Layout::Grid;
+use Renard::Jacquard::Layout::All;
+use Renard::Jacquard::Layout::Composed;
 use Renard::Yarn::Graphene;
+use Renard::Jacquard::Content::Rectangle;
+use Renard::Taffeta::Color::Named;
+use Renard::Taffeta::Style::Fill;
+use Renard::Taffeta::Style::Stroke;
+
+use Path::Tiny;
 
 subtest "Create a grid" => sub {
 	my $layout = Renard::Jacquard::Layout::Grid->new();
+	my $composed = Renard::Jacquard::Layout::Composed->new(
+		layouts => [
+			Renard::Jacquard::Layout::All->new(),
+			$layout,
+		],
+	);
 
 	my $container = Renard::Jacquard::Actor->new(
-		layout => $layout,
+		layout => $composed,
 	);
 
 	my $actors_bounds = [
@@ -26,10 +39,16 @@ subtest "Create a grid" => sub {
 	my @actors;
 	for my $item_num (0..@$actors_bounds-1) {
 		my $actor = Renard::Jacquard::Actor->new(
-			bounds => [
-				$actors_bounds->[$item_num][0],
-				$actors_bounds->[$item_num][1]
-			],
+			content => Renard::Jacquard::Content::Rectangle->new(
+				width  => $actors_bounds->[$item_num][0],
+				height => $actors_bounds->[$item_num][1],
+				fill => Renard::Taffeta::Style::Fill->new(
+					color => Renard::Taffeta::Color::Named->new( name => 'svg:red' ),
+				),
+				stroke => Renard::Taffeta::Style::Stroke->new(
+					color => Renard::Taffeta::Color::Named->new( name => 'svg:blue' ),
+				),
+			),
 		);
 
 		push @actors, $actor;
@@ -43,27 +62,40 @@ subtest "Create a grid" => sub {
 		);
 	}
 
-	my $positions = $container->layout->update;
+	my $states = $container->layout->update;
 
-	is scalar keys %$positions, 11, 'have the right amount of actors';
+	is $states->number_of_actors, 11, 'have the right amount of actors';
 
-	is $positions->{$actors[0]}, [  0,  0 ], 'position of actor 0';
-	is $positions->{$actors[1]}, [ 10,  0 ], 'position of actor 1';
-	is $positions->{$actors[2]}, [ 30,  0 ], 'position of actor 2';
+	my $get_point = sub {
+		my ($actor) = @_;
+		$states->get_state($actor)
+			->transform
+			->apply_to_point([0,0]);
+	};
+	is $get_point->($actors[ 0]), [  0,  0 ], 'position of actor 0';
+	is $get_point->($actors[ 1]), [ 10,  0 ], 'position of actor 1';
+	is $get_point->($actors[ 2]), [ 30,  0 ], 'position of actor 2';
 
-	is $positions->{$actors[3]}, [  0, 10 ], 'position of actor 3';
-	is $positions->{$actors[4]}, [ 10, 10 ], 'position of actor 4';
-	is $positions->{$actors[5]}, [ 30, 10 ], 'position of actor 5';
+	is $get_point->($actors[ 3]), [  0, 10 ], 'position of actor 3';
+	is $get_point->($actors[ 4]), [ 10, 10 ], 'position of actor 4';
+	is $get_point->($actors[ 5]), [ 30, 10 ], 'position of actor 5';
 
-	is $positions->{$actors[6]}, [  0, 20 ], 'position of actor 6';
-	is $positions->{$actors[7]}, [ 10, 20 ], 'position of actor 7';
-	is $positions->{$actors[8]}, [ 30, 20 ], 'position of actor 8';
+	is $get_point->($actors[ 6]), [  0, 20 ], 'position of actor 6';
+	is $get_point->($actors[ 7]), [ 10, 20 ], 'position of actor 7';
+	is $get_point->($actors[ 8]), [ 30, 20 ], 'position of actor 8';
 
-	is $positions->{$actors[9]}, [  0, 50 ], 'position of actor 9';
-	is $positions->{$actors[10]},[ 10, 50 ], 'position of actor 10';
+	is $get_point->($actors[ 9]), [  0, 50 ], 'position of actor 9';
+	is $get_point->($actors[10]), [ 10, 50 ], 'position of actor 10';
 
-	use RenderTree;
-	RenderTree->render_to_svg($container, path('test.svg'));
+
+
+	use Renard::Jacquard::Render::GenerateTree;
+	my $file = Path::Tiny->tempfile;
+	Renard::Jacquard::Render::GenerateTree
+		->render_tree_to_svg(
+			Renard::Jacquard::Render::GenerateTree->get_render_tree(
+				root => $container ),
+			$file );
 };
 
 done_testing;

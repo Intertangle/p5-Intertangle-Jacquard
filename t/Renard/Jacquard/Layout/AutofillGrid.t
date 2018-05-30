@@ -53,11 +53,6 @@ subtest 'Fill order' => sub {
 
 		plan tests => $number_of_actors;
 
-		#my @order = map {
-			#+{ $grid->_item_number_to_row_column( $_ ) }
-		#} 0..$number_of_actors-1;
-		#use DDP; p @order;
-
 		my $table = [];
 		for my $n (0..$number_of_actors-1) {
 			my $result = { $grid->_item_number_to_row_column( $n ) };
