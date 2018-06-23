@@ -59,6 +59,7 @@ method BUILD(@) {
 	$drawing_area->add_events([ qw/button-press-mask pointer-motion-mask/ ]);
 	$drawing_area->signal_connect( 'motion-notify-event' =>
 		\&on_motion_notify_event_cb, $self );
+	$drawing_area->add_events('scroll-mask');
 
 	my $scrolled_window = Gtk3::ScrolledWindow->new();
 	$scrolled_window->set_hexpand(TRUE);
