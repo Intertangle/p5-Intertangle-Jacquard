@@ -3,15 +3,12 @@ package Renard::Jacquard::Content::Rectangle;
 # ABSTRACT: Rectangle content
 
 use Mu;
-use MooX::ClassAttribute;
 use Renard::Incunabula::Common::Types qw(ClassName);
 use Renard::Taffeta::Graphics::Rectangle;
 
-class_has taffeta_class => (
-	is => 'ro',
-	isa => ClassName,
-	default => 'Renard::Taffeta::Graphics::Rectangle',
-);
+classmethod taffeta_class() {
+	'Renard::Taffeta::Graphics::Rectangle';
+}
 
 =method BUILDARGS
 

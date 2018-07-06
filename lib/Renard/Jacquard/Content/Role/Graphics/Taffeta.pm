@@ -7,17 +7,10 @@ use Renard::Incunabula::Common::Types qw(HashRef InstanceOf Bool ClassName);
 use MooX::ClassAttribute;
 use Renard::Jacquard::Render::State;
 
-=begin :comment
-
 class_has taffeta_class => (
 	is => 'ro',
 	isa => ClassName,
-	default => classmethod() { ... },
 );
-
-=end :comment
-
-=cut
 
 has _delegate_args => (
 	is => 'ro',
