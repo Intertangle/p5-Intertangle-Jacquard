@@ -3,15 +3,11 @@ package Renard::Jacquard::Content::Image::PNG;
 # ABSTRACT: PNG data content
 
 use Mu;
-use MooX::ClassAttribute;
-use Renard::Incunabula::Common::Types qw(ClassName);
 use Renard::Taffeta::Graphics::Image::PNG;
 
-class_has taffeta_class => (
-	is => 'ro',
-	isa => ClassName,
-	default => 'Renard::Taffeta::Graphics::Image::PNG',
-);
+classmethod taffeta_class() {
+	'Renard::Taffeta::Graphics::Image::PNG';
+}
 
 =method BUILDARGS
 
