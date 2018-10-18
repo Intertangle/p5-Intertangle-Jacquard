@@ -1,16 +1,14 @@
 use Renard::Incunabula::Common::Setup;
-package Renard::Jacquard::Content::Role::Graphics::Taffeta;
+package Renard::Jacquard::Content::Role::TaffetaDelegate;
 # ABSTRACT: A role actors created from Taffeta classes
 
 use Moo::Role;
 use Renard::Incunabula::Common::Types qw(HashRef InstanceOf Bool ClassName);
-use MooX::ClassAttribute;
 use Renard::Jacquard::Render::State;
 
-class_has taffeta_class => (
-	is => 'ro',
-	isa => ClassName,
-);
+classmethod taffeta_class() :ReturnType(ClassName) {
+	...
+};
 
 has _delegate_args => (
 	is => 'ro',
@@ -70,5 +68,7 @@ method as_taffeta(
 		%$taffeta_args,
 	);
 }
+
+with qw(Renard::Jacquard::Content::Role::Renderable);
 
 1;

@@ -19,6 +19,6 @@ Takes L<Renard::Taffeta::Graphics::Image::PNG> attributes and stores them.
 
 =cut
 
-with qw(Renard::Jacquard::Content::Role::Graphics::Taffeta);
+with qw(Renard::Jacquard::Content::Role::TaffetaDelegate);
 
 1;
