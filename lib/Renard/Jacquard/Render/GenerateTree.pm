@@ -23,12 +23,8 @@ method get_render_tree(
 	my $tree = Tree::DAG_Node->new;
 
 	if( ! $root->is_group_node ) {
-		my $taffeta = $root->content->as_taffeta(
-			state => $state,
-		);
-
 		$tree->attributes({
-			render => $taffeta,
+			renderable => 1,
 		});
 	} else {
 		my $layout;
@@ -53,6 +49,7 @@ method get_render_tree(
 			);
 		}
 	}
+	$tree->attributes->{scene_graph} = $root;
 	$tree->attributes->{bounds} = $root->bounds( $state );
 	$tree->attributes->{state} =  $state;
 
@@ -70,8 +67,10 @@ method render_tree_to_svg( $render_tree, $path  ) {
 
 	method _walker( $node, $svg ) {
 		my @daughters = $node->daughters;
-		if( exists $node->attributes->{render} ) {
-			my $el = $node->attributes->{render}->render_svg( $svg );
+		if( exists $node->attributes->{renderable} ) {
+			my $el = $node->attributes->{scene_graph}->content->as_taffeta(
+				state => $node->attributes->{state},
+			)->render_svg( $svg );
 			#$self->_add_debug_tooltips( $node, $el );
 		}
 		my $group = @daughters > 1 ? $svg->group : $svg ;
