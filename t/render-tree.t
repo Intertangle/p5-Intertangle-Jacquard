@@ -13,6 +13,8 @@ subtest "Build render tree" => sub {
 	use Renard::Jacquard::Layout::AutofillGrid;
 	use Renard::Taffeta::Style::Fill;
 	use Renard::Jacquard::Actor;
+	use Renard::Jacquard::Actor::Taffeta::Group;
+	use Renard::Jacquard::Actor::Taffeta::Graphics;
 	use Renard::Taffeta::Color::Named;
 	use Renard::Jacquard::Layout::Affine2D;
 	use Renard::Jacquard::Layout::All;
@@ -41,7 +43,7 @@ subtest "Build render tree" => sub {
 		],
 	);
 
-	my $root = Renard::Jacquard::Actor->new( layout => $composed );
+	my $root = Renard::Jacquard::Actor::Taffeta::Group->new( layout => $composed );
 
 	my $actor_info = [
 		[ 10, 10, 'red'     ],
@@ -53,7 +55,7 @@ subtest "Build render tree" => sub {
 	];
 
 	for my $actor_param (@$actor_info) {
-		my $actor = Renard::Jacquard::Actor->new(
+		my $actor = Renard::Jacquard::Actor::Taffeta::Graphics->new(
 			content => Renard::Jacquard::Content::Rectangle->new(
 				width   => $actor_param->[0],
 				height  => $actor_param->[1],

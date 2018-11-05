@@ -4,6 +4,7 @@ use Test::Most tests => 1;
 
 use Renard::Incunabula::Common::Setup;
 use Renard::Jacquard::Actor;
+use Renard::Jacquard::Actor::Taffeta::Group;
 use Renard::Jacquard::Layout::Fixed;
 use Renard::Jacquard::Layout::All;
 use Renard::Jacquard::Layout::Composed;
@@ -17,7 +18,7 @@ subtest "Create a fixed layout" => sub {
 		],
 	);
 
-	my $container = Renard::Jacquard::Actor->new(
+	my $container = Renard::Jacquard::Actor::Taffeta::Group->new(
 		layout => $composed,
 	);
 

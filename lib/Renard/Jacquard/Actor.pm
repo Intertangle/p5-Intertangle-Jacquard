@@ -5,10 +5,7 @@ package Renard::Jacquard::Actor;
 use Moo;
 use Renard::Incunabula::Common::Types qw(InstanceOf);
 use Renard::Jacquard::Types qw(Actor);
-use Renard::Yarn::Types qw(Size);
 use Tree::DAG_Node;
-
-use Renard::Jacquard::Content::Null;
 
 =attr _tree_dag_node
 
@@ -26,87 +23,6 @@ has _tree_dag_node => (
 	},
 );
 
-=attr layout
-
-The layout to use for the children actors.
-
-Predicate: C<has_layout>
-
-=method has_layout
-
-Predicate for C<layout> attribute.
-
-=cut
-has layout => (
-	is => 'ro',
-	predicate => 1,
-);
-
-=attr content
-
-The content for the actor.
-
-=cut
-has content => (
-	is => 'ro',
-	default => sub { Renard::Jacquard::Content::Null->new },
-);
-
-=method bounds
-
-  method bounds( $state )
-
-Retrieves the bounds of the actor via the content.
-
-=cut
-method bounds( $state ) {
-	if( $self->number_of_children == 0 ) {
-		return $self->content->bounds( $state );
-	} else {
-		my $states = $self->layout->update( state => $state );
-
-		my @bounds = map { $_->bounds( $states->get_state($_) ) } @{ $self->children };
-		my $rect = shift @bounds;
-		while( @bounds ) {
-			$rect = $rect->union( shift @bounds );
-		}
-		return $rect;
-	}
-}
-
-=method add_child
-
-Add a child actor.
-
-=cut
-method add_child( (Actor) $actor, %options  ) {
-	$self->_tree_dag_node->add_daughter(
-		$actor->_tree_dag_node
-	);
-	if( $self->has_layout ) {
-		$self->layout->add_actor( $actor,
-			exists $options{layout} ? %{ $options{layout} } : ()
-		);
-	}
-}
-
-=method number_of_children
-
-Number of children for this actor.
-
-=cut
-method number_of_children() {
-	scalar $self->_tree_dag_node->daughters;
-}
-
-=method children
-
-Returns a C<ArrayRef> of the children of this actor.
-
-=cut
-method children() {
-	[ map { $_->attributes->{actor} } $self->_tree_dag_node->daughters ];
-}
 
 =method parent
 
@@ -114,16 +30,10 @@ Returns the parent of this actor.
 
 =cut
 method parent() {
-	return $self->_tree_dag_node->mother;
-}
-
-=method is_group_node
-
-Returns a C<Bool> that is true if the node is a group node.
-
-=cut
-method is_group_node() {
-	ref $self->content eq 'Renard::Jacquard::Content::Null'
+	my $parent_dag = $self->_tree_dag_node->mother;
+	return defined $parent_dag
+		? $parent_dag->attributes->{actor}
+		: undef;
 }
 
 with qw(MooX::Role::Logger);

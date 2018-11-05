@@ -4,6 +4,7 @@ use Test::Most tests => 2;
 
 use Renard::Incunabula::Common::Setup;
 use Renard::Jacquard::Actor;
+use Renard::Jacquard::Actor::Taffeta::Group;
 use Renard::Yarn::Graphene;
 
 subtest "Create an actor" => sub {
@@ -11,7 +12,7 @@ subtest "Create an actor" => sub {
 };
 
 subtest "Create an actor with children" => sub {
-	my $actor = Renard::Jacquard::Actor->new();
+	my $actor = Renard::Jacquard::Actor::Taffeta::Group->new();
 	my @children = map {
 		Renard::Jacquard::Actor->new()
 	} 0..3;

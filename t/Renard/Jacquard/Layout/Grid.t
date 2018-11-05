@@ -4,7 +4,10 @@ use Test::Most tests => 1;
 use Test::Needs qw(SVG Data::Printer);
 
 use Renard::Incunabula::Common::Setup;
-use Renard::Jacquard::Actor;
+
+use Renard::Jacquard::Actor::Taffeta::Group;
+use Renard::Jacquard::Actor::Taffeta::Graphics;
+
 use Renard::Jacquard::Layout::Grid;
 use Renard::Jacquard::Layout::All;
 use Renard::Jacquard::Layout::Composed;
@@ -25,7 +28,7 @@ subtest "Create a grid" => sub {
 		],
 	);
 
-	my $container = Renard::Jacquard::Actor->new(
+	my $container = Renard::Jacquard::Actor::Taffeta::Group->new(
 		layout => $composed,
 	);
 
@@ -38,7 +41,7 @@ subtest "Create a grid" => sub {
 
 	my @actors;
 	for my $item_num (0..@$actors_bounds-1) {
-		my $actor = Renard::Jacquard::Actor->new(
+		my $actor = Renard::Jacquard::Actor::Taffeta::Graphics->new(
 			content => Renard::Jacquard::Content::Rectangle->new(
 				width  => $actors_bounds->[$item_num][0],
 				height => $actors_bounds->[$item_num][1],
