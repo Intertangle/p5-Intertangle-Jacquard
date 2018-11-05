@@ -6,7 +6,7 @@ use Mu;
 use Renard::Incunabula::Common::Types qw(ClassName);
 use Renard::Taffeta::Graphics::Rectangle;
 
-classmethod taffeta_class() {
+classmethod taffeta_class() :ReturnType(ClassName) {
 	'Renard::Taffeta::Graphics::Rectangle';
 }
 
