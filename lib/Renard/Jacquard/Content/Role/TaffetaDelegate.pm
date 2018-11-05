@@ -6,6 +6,11 @@ use Moo::Role;
 use Renard::Incunabula::Common::Types qw(HashRef InstanceOf Bool ClassName);
 use Renard::Jacquard::Render::State;
 
+=classmethod taffeta_class
+
+Returns a C<ClassName> with the Taffeta class to delegate to.
+
+=cut
 classmethod taffeta_class() :ReturnType(ClassName) {
 	...
 };

@@ -6,6 +6,11 @@ use Mu;
 use Renard::Incunabula::Common::Types qw(ClassName);
 use Renard::Taffeta::Graphics::Image::PNG;
 
+=classmethod taffeta_class
+
+Returns L<Renard::Taffeta::Graphics::Image::PNG>.
+
+=cut
 classmethod taffeta_class() :ReturnType(ClassName) {
 	'Renard::Taffeta::Graphics::Image::PNG';
 }
