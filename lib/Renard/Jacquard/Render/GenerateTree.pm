@@ -61,7 +61,7 @@ method get_render_tree(
 Renders the result of C<get_render_tree> to an SVG file.
 
 =cut
-method render_tree_to_svg( $render_tree, $path  ) {
+method render_tree_to_svg( $render_tree  ) {
 	load SVG;
 	my $svg = SVG->new;
 
@@ -81,7 +81,7 @@ method render_tree_to_svg( $render_tree, $path  ) {
 
 	$self->_walker( $render_tree, $svg->group );
 
-	path($path)->spew_utf8($svg->xmlify);
+	$svg;
 }
 
 method _add_debug_tooltips( $node, $element ) {
