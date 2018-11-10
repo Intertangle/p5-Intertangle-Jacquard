@@ -49,7 +49,7 @@ method render_to_cairo( (InstanceOf['Cairo::Context']) $cr, (InstanceOf['Renard:
 		Renard::Jacquard::Render::State->new(
 			coordinate_system_transform =>
 				Renard::Taffeta::Transform::Affine2D::Translation->new(
-					translate => [ - $bounds->origin->x, - $bounds->origin->y ],
+					translate => - $bounds->origin,
 				)
 		);
 
