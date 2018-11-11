@@ -15,6 +15,9 @@ has graph => (
 	required => 1,
 );
 
+method size() {
+	$self->graph->attributes->{bounds}->size;
+}
 
 method to_svg() {
 	my $gen = Renard::Jacquard::Render::GenerateTree->new;
