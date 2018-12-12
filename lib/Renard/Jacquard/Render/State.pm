@@ -102,4 +102,17 @@ method actor_coordinates_to_world_coordinates( $position ) {
 	);
 }
 
+has _actor_to_bounds => (
+	is => 'ro',
+	default => sub{ +{} },
+);
+
+method r_bounds( $actor ) {
+	if( ! exists $self->_actor_to_bounds->{ $actor } ) {
+		$self->_actor_to_bounds->{ $actor } = $actor->bounds( $self );
+	}
+
+	return $self->_actor_to_bounds->{ $actor };
+}
+
 1;

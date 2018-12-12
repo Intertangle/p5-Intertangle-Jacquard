@@ -181,7 +181,9 @@ method update( :$state ) {
 			coordinate_system_transform => $translate,
 		);
 
-		$output->set_state( $actor, $input_state->compose($state) );
+		my $composed = $input_state->compose($state);
+		$output->set_state( $actor, $composed );
+		$composed->r_bounds( $actor );
 	}
 
 	$output;
