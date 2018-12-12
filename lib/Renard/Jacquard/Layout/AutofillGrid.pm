@@ -151,7 +151,8 @@ This only allows a single actor to occupy a space in the grid.
 
 =cut
 method add_actor( $actor ) {
-	my $item_num = $self->number_of_actors;
+	#my $item_num = $self->number_of_actors;
+	my $item_num = scalar keys %{ $self->_data };
 	$self->SUPER::add_actor(
 		$actor,
 		$self->_item_number_to_row_column( $item_num ),
