@@ -47,4 +47,7 @@ after BUILD => method( $args ) {
 	$self->children( $args->{children} ) if exists $args->{children};
 };
 
+with qw(Renard::Jacquard::Actor::Role::DataPrinter);
+method _data_printer_internal() { $self->children }
+
 1;

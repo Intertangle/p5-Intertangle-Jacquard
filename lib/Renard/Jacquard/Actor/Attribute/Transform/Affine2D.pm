@@ -24,4 +24,7 @@ method attribute( $state ) {
 	...
 }
 
+with qw(Renard::Jacquard::Actor::Role::DataPrinter);
+method _data_printer_internal() { $self->transform }
+
 1;

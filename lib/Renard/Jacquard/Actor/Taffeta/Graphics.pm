@@ -29,4 +29,7 @@ method bounds( $state ) {
 	return $self->content->bounds( $state );
 }
 
+with qw(Renard::Jacquard::Actor::Role::DataPrinter);
+method _data_printer_internal() { $self->content }
+
 1;
