@@ -1,13 +1,15 @@
 #!/usr/bin/env perl
 
-use Test::Most tests => 1;
+use Test::Most;
 use Renard::Incunabula::Devel::TestHelper;
 
 use Renard::Incunabula::Common::Setup;
 use Renard::Jacquard::Content::Image::PNG;
 
 my $png_path = try {
-	Renard::Incunabula::Devel::TestHelper->test_data_directory->child(qw(PNG libpng ccwn3p08.png));
+	my $path = Renard::Incunabula::Devel::TestHelper->test_data_directory->child(qw(PNG libpng ccwn3p08.png));
+	plan tests => 1;
+	$path;
 } catch {
 	plan skip_all => "$_";
 };
