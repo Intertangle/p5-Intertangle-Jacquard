@@ -18,7 +18,7 @@ Retrieves the bounds of the actor via the content.
 method bounds( $state ) {
 	my $states = $self->layout->update( state => $state );
 
-	my @bounds = map { $_->bounds( $states->get_state($_) ) } @{ $self->children };
+	my @bounds = map { $states->get_state($_)->r_bounds($_) } @{ $self->children };
 	my $rect = shift @bounds;
 	while( @bounds ) {
 		$rect = $rect->union( shift @bounds );

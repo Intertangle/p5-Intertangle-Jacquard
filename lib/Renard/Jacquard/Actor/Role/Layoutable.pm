@@ -4,7 +4,7 @@ package Renard::Jacquard::Actor::Role::Layoutable;
 
 use Moo::Role;
 
-with qw(Renard::Jacquard::Actor::Role::WithChildren);
+with qw(Renard::Jacquard::Actor::Role::Tree::TreeDAGNode::WithChildren);
 
 =attr layout
 

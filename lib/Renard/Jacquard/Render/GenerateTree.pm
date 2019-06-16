@@ -22,7 +22,7 @@ method get_render_tree(
 
 	my $tree = Tree::DAG_Node->new;
 
-	if( ! $root->does('Renard::Jacquard::Actor::Role::WithChildren') ) {
+	if( ! $root->does('Renard::Jacquard::Actor::Role::Tree::TreeDAGNode::WithChildren') ) {
 		$tree->attributes({
 			renderable => 1,
 		});
