@@ -4,7 +4,10 @@ package Renard::Jacquard::Actor;
 
 use Moo;
 
-with qw(Renard::Jacquard::Actor::Role::Tree::TreeDAGNode);
+with qw(
+	Renard::Jacquard::Actor::Role::Tree::TreeDAGNode
+	Renard::Jacquard::Actor::Role::Tree::TreeDAGNode::WithChildren
+);
 
 method BUILD(@) { }
 
