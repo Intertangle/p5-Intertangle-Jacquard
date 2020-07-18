@@ -1,3 +1,6 @@
 requires 'Renard::Taffeta',
 	git => 'https://github.com/project-renard/p5-Renard-Taffeta.git',
 	branch => 'master';
+requires 'Renard::Punchcard',
+	git => 'https://github.com/project-renard/p5-Renard-Punchcard.git',
+	branch => 'layout-kiwi';
