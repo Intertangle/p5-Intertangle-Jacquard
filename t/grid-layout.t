@@ -32,23 +32,16 @@ package SVGActor {
 	#Renard::Jacquard::Role::Geometry::Size2D
 }
 
-package SVGGroupRenderRole {
-	use Moo::Role;
-
-	method render($svg) {
-		my $group = $svg->group;
-		for my $child (@{$self->children}) {
-			$child->render($group);
-		}
-	}
-}
-
 subtest "Test grid layout" => fun() {
-	my $group = Renard::Jacquard::Actor->new;
-	Role::Tiny->apply_roles_to_object( $group, qw(
+	my $layout_group = Moo::Role->create_class_with_roles(
+		'Renard::Jacquard::Actor' => qw(
 		Renard::Jacquard::Role::Geometry::Position2D
-		SVGGroupRenderRole
+		Renard::Jacquard::Role::Render::QnD::SVG::Group
+		Renard::Jacquard::Role::Render::QnD::Layout::Grid
 	));
+	my $group = $layout_group->new(
+		layout => Renard::Jacquard::Layout::Grid->new( rows => 3, columns => 2 ),
+	);
 
 	$group->x->value( 0 );
 	$group->y->value( 0 );
@@ -73,8 +66,7 @@ subtest "Test grid layout" => fun() {
 		$group->add_child($actor);
 	}
 
-	my $grid = Renard::Jacquard::Layout::Grid->new( rows => 3, columns => 2 );
-	$grid->update( $group );
+	$group->update_layout;
 
 	my $svg = SVG->new;
 	$group->render($svg);
