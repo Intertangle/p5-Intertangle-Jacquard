@@ -11,4 +11,6 @@ method render($svg) {
 	}
 }
 
+with qw(Renard::Jacquard::Role::Render::QnD::SVG);
+
 1;
