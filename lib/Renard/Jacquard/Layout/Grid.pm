@@ -4,9 +4,10 @@ package Renard::Jacquard::Layout::Grid;
 
 use Mu;
 use Renard::Punchcard::Backend::Kiwisolver::Context;
+use List::AllUtils qw(reduce);
 
-ro 'rows';
-ro 'columns';
+ro 'rows'; # TODO PositiveInt
+ro 'columns'; # TODO PositiveInt
 
 lazy context => sub {
 	Renard::Punchcard::Backend::Kiwisolver::Context->new;
@@ -36,8 +37,8 @@ method create_constraints($actor) {
 
 		push @constraints, $this_item->x >= 0;
 		push @constraints, $this_item->y >= 0;
-		push @constraints, $cols_constraints[$col] >= $this_item->width;
-		push @constraints, $rows_constraints[$row] >= $this_item->height;
+		push @constraints, $cols_constraints[$col] >= (ref $this_item->width  ? $this_item->width->value  : $this_item->width);
+		push @constraints, $rows_constraints[$row] >= (ref $this_item->height ? $this_item->height->value : $this_item->height);
 
 		if( $col > 0 ) {
 			my $item_left0 = $items->[$self->_rc_to_item_no($row,$col-1)];
@@ -48,6 +49,9 @@ method create_constraints($actor) {
 			push @constraints, $item_above->y + $rows_constraints[$row-1] == $this_item->y;
 		}
 	}
+
+	push @constraints, $actor->width == reduce { $a + $b } @cols_constraints;
+	push @constraints, $actor->height == reduce { $a + $b } @rows_constraints;
 
 	\@constraints;
 }
@@ -64,7 +68,7 @@ method update($actor) {
 
 	if( ! $self->_has_constraints ) {
 		my $constraints = $self->create_constraints( $actor );
-		#$self->_constraints( $constraints );
+		$self->_constraints( $constraints );
 
 		for my $constraint (@$constraints) {
 			$solver->add_constraint($constraint);
@@ -73,8 +77,10 @@ method update($actor) {
 		$solver->add_edit_variable($first_item->y, Renard::API::Kiwisolver::Strength::STRONG );
 	}
 
-	$solver->suggest_value($first_item->x, $actor->x->value);
-	$solver->suggest_value($first_item->y, $actor->y->value);
+	#$solver->suggest_value($first_item->x, $actor->x->value);
+	#$solver->suggest_value($first_item->y, $actor->y->value);
+	$solver->suggest_value($first_item->x, 0);
+	$solver->suggest_value($first_item->y, 0);
 	$solver->update;
 }
 

@@ -36,6 +36,7 @@ subtest "Test grid layout" => fun() {
 	my $layout_group = Moo::Role->create_class_with_roles(
 		'Renard::Jacquard::Actor' => qw(
 		Renard::Jacquard::Role::Geometry::Position2D
+		Renard::Jacquard::Role::Geometry::Size2D
 		Renard::Jacquard::Role::Render::QnD::SVG::Group
 		Renard::Jacquard::Role::Render::QnD::Layout::Grid
 	));
