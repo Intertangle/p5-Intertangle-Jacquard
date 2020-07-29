@@ -1,5 +1,5 @@
 use Renard::Incunabula::Common::Setup;
-package Renard::Jacquard::Role::Render::QnD::Layout::Grid;
+package Renard::Jacquard::Role::Render::QnD::Layout;
 # ABSTRACT: Quick-and-dirty layout role
 
 use Moo::Role;

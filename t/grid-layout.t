@@ -38,7 +38,7 @@ subtest "Test grid layout" => fun() {
 		Renard::Jacquard::Role::Geometry::Position2D
 		Renard::Jacquard::Role::Geometry::Size2D
 		Renard::Jacquard::Role::Render::QnD::SVG::Group
-		Renard::Jacquard::Role::Render::QnD::Layout::Grid
+		Renard::Jacquard::Role::Render::QnD::Layout
 	));
 	my $group = $layout_group->new(
 		layout => Renard::Jacquard::Layout::Grid->new( rows => 3, columns => 2 ),
