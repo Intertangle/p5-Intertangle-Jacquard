@@ -5,7 +5,7 @@ package Renard::Jacquard::Role::Render::QnD::SVG::Group;
 use Moo::Role;
 
 method render($svg) {
-	my $group = $svg->group;
+	my $group = $svg->group( transform => "translate(@{[ $self->x->value ]},@{[ $self->y->value ]})" );
 	for my $child (@{$self->children}) {
 		$child->render($group);
 	}
