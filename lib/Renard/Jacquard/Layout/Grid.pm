@@ -18,7 +18,7 @@ method _item_no_to_rc($item_no) {
 }
 method _rc_to_item_no($r, $c) {
 	$r * $self->columns + $c;
-};
+}
 
 method create_constraints($actor) {
 	my $items = $actor->children;
