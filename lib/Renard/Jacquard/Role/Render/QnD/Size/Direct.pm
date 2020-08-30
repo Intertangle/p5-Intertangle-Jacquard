@@ -6,8 +6,8 @@ use Mu::Role;
 
 lazy size => method() {
 	Renard::Yarn::Graphene::Size->new(
-		height => $self->height->value,
-		width => $self->width->value,
+		height => ref $self->height ? $self->height->value : $self->height,
+		width => ref $self->width ? $self->width->value : $self->width,
 	);
 };
 
