@@ -1,197 +1,87 @@
 use Renard::Incunabula::Common::Setup;
 package Renard::Jacquard::Layout::Grid;
-# ABSTRACT: A grid layout
+# ABSTRACT: «TODO»
 
-use Renard::Incunabula::Common::Types qw(PositiveOrZeroInt PositiveInt ArrayRef);
+use Mu;
+use Renard::Punchcard::Backend::Kiwisolver::Context;
+use List::AllUtils qw(reduce);
 
-use Moo;
-use List::AllUtils qw(max);
-use MooX::HandlesVia;
-use MooseX::HandlesConstructor;
-use Renard::Taffeta::Transform::Affine2D::Translation;
+ro 'rows'; # TODO PositiveInt
+ro 'columns'; # TODO PositiveInt
 
-=method BUILD
+lazy context => sub {
+	Renard::Punchcard::Backend::Kiwisolver::Context->new;
+};
 
-Supports setting handles C<intergrid_space_rows>, C<intergrid_space_columns> at
-construction time in addition to the other attributes.
+method _item_no_to_rc($item_no) {
+	( int($item_no / $self->columns), $item_no % $self->columns );
+}
+method _rc_to_item_no($r, $c) {
+	$r * $self->columns + $c;
+}
 
-=cut
+method create_constraints($actor) {
+	my $items = $actor->children;
 
+	my @constraints;
 
-=attr intergrid_space
+	my @rows_constraints = map { $self->context->new_variable( name => "row.$_" ) } (0..$self->rows-1);
+	my @cols_constraints = map { $self->context->new_variable( name => "col.$_" ) } (0..$self->columns-1);
 
-How much space to add between grid rows/columns.
+	push @constraints, $_ >= 0 for @rows_constraints;
+	push @constraints, $_ >= 0 for @cols_constraints;
 
-Either use a single number to set both rows and columns or a tuple to set both independently.
+	for my $item_no (0..@$items-1) {
+		my ($row, $col) = $self->_item_no_to_rc($item_no);
+		my $this_item = $items->[$item_no];
 
-=attr intergrid_space_rows
+		push @constraints, $this_item->x >= 0;
+		push @constraints, $this_item->y >= 0;
+		push @constraints, $cols_constraints[$col] >= (ref $this_item->width  ? $this_item->width->value  : $this_item->width);
+		push @constraints, $rows_constraints[$row] >= (ref $this_item->height ? $this_item->height->value : $this_item->height);
 
-How much space to add between grid rows.
+		if( $col > 0 ) {
+			my $item_left0 = $items->[$self->_rc_to_item_no($row,$col-1)];
+			push @constraints, $item_left0->x + $cols_constraints[$col-1] == $this_item->x;
+		}
+		if( $row > 0 ) {
+			my $item_above = $items->[$self->_rc_to_item_no($row-1,$col)];
+			push @constraints, $item_above->y + $rows_constraints[$row-1] == $this_item->y;
+		}
+	}
 
-Implemented as a handle for C<intergrid_space>, but can be set at construction time.
+	push @constraints, $actor->width == reduce { $a + $b } @cols_constraints;
+	push @constraints, $actor->height == reduce { $a + $b } @rows_constraints;
 
-=attr intergrid_space_columns
+	\@constraints;
+}
 
-How much space to add between grid columns.
-
-Implemented as a handle for C<intergrid_space>, but can be set at construction time.
-
-=cut
-has intergrid_space => (
-	is => 'ro',
-	isa => ArrayRef,
-	coerce => sub {
-		@_ == 1 && ! ref $_[0] ?  [ $_[0], $_[0] ] : $_[0]
-	},
-	default => sub { [ 0, 0 ] },
-	handles_via => 'Array',
-	handles => {
-		intergrid_space_rows    => [ accessor => 0 ],
-		intergrid_space_columns => [ accessor => 1 ],
-	},
-);
-
-=attr mingrid_space
-
-Minimum space to use for a grid space when it is empty.
-
-=cut
-has mingrid_space => (
-	is => 'ro',
-	default => sub { 0 },
-);
-
-=attr _rows
-
-=attr _columns
-
-Current maximum number of rows or columns
-
-=cut
-has [qw(_rows _columns)] => (
+has _constraints => (
 	is => 'rw',
-	isa => PositiveInt,
+	predicate => 1,
 );
 
-=attr _data
+method update($actor) {
+	my $solver = $self->context->solver;
+	my $items = $actor->children;
+	my $first_item = $items->[0];
 
-Holds position data for each actor.
+	if( ! $self->_has_constraints ) {
+		my $constraints = $self->create_constraints( $actor );
+		$self->_constraints( $constraints );
 
-=cut
-has _data => (
-	is =>'ro',
-	default => sub {
-		my %hash;
-		tie %hash, 'Tie::RefHash';
-		\%hash;
-	},
-);
+		for my $constraint (@$constraints) {
+			$solver->add_constraint($constraint);
+		}
+		$solver->add_edit_variable($first_item->x, Renard::API::Kiwisolver::Strength::STRONG );
+		$solver->add_edit_variable($first_item->y, Renard::API::Kiwisolver::Strength::STRONG );
+	}
 
-=method add_actor
-
-Add an actor the grid.
-
-=cut
-method add_actor( $actor, (PositiveOrZeroInt) :$row, (PositiveOrZeroInt) :$column ) {
-	$self->_data->{ $actor } = { row => $row, column => $column };
+	#$solver->suggest_value($first_item->x, $actor->x->value);
+	#$solver->suggest_value($first_item->y, $actor->y->value);
+	$solver->suggest_value($first_item->x, 0);
+	$solver->suggest_value($first_item->y, 0);
+	$solver->update;
 }
-
-=method update
-
-Layout the actors.
-
-=cut
-method update( :$state ) {
-	my @actors = keys %{ $self->_data };
-
-	$self->_logger->tracef( "Updating %s: got ", $self  );
-
-	my $actor_to_grid = {};
-	my $grid_by_row = {};
-	my $grid_by_col = {};
-	tie my %bounds_by_actor, 'Tie::RefHash';
-	my $bounds_by_actor = \%bounds_by_actor;
-	for my $actor (@actors) {
-		my $r = $self->_data->{ $actor }{row};
-		my $c = $self->_data->{ $actor }{column};
-
-		$actor_to_grid->{$actor} = [ $r , $c ];
-		push @{ $grid_by_row->{$r} }, $actor;
-		push @{ $grid_by_col->{$c} }, $actor;
-
-		my $state = defined $state ? $state : $self->input->get_state( $actor );
-		$bounds_by_actor->{$actor} = $actor->bounds( $state );
-	}
-
-	my $max_height_by_row = {
-		map {
-			my @actors = @{ $grid_by_row->{$_} };
-			my $max_height = max map {
-				my $actor = $_;
-				$bounds_by_actor->{$actor}->size->height;
-			} @actors;
-
-			$_ => $max_height;
-		} keys %$grid_by_row
-	};
-
-	my $max_width_by_col = {
-		map {
-			my @actors = @{ $grid_by_col->{$_} };
-			my $max_width = max map {
-				my $actor = $_;
-				$bounds_by_actor->{$actor}->size->width;
-			} @actors;
-
-			$_ => $max_width;
-		} keys %$grid_by_col
-	};
-
-	my $mingrid_space = $self->mingrid_space;
-
-	my $grid_corner = {};
-	my $row_corner = [ 0 ]; # row 0 starts at y = 0
-	$self->_rows(1 + max keys %$max_height_by_row);
-	for my $row (1..$self->_rows - 1) {
-		push @$row_corner, $row_corner->[-1]
-			+ $self->intergrid_space_rows
-			+ $max_height_by_row->{$row - 1} // $mingrid_space
-			;
-	}
-
-	my $col_corner = [ 0 ]; # col 0 starts at x = 0
-	$self->_columns(1 + max keys %$max_width_by_col);
-	for my $col (1..$self->_columns - 1) {
-		push @$col_corner, $col_corner->[-1]
-			+ $self->intergrid_space_columns
-			+ $max_width_by_col->{$col - 1} // $mingrid_space
-			;
-	}
-
-	my $output = Renard::Jacquard::Render::StateCollection->new;
-	for my $actor (@actors) {
-		my $input_state = defined $state ? $state : $self->input->get_state( $actor );
-		my $translate = Renard::Taffeta::Transform::Affine2D::Translation->new(
-			translate => [
-				$col_corner->[ $actor_to_grid->{$actor}[1] ],
-				$row_corner->[ $actor_to_grid->{$actor}[0] ],
-			],
-		);
-		my $state = Renard::Jacquard::Render::State->new(
-			coordinate_system_transform => $translate,
-		);
-
-		my $composed = $input_state->compose($state);
-		$output->set_state( $actor, $composed );
-		$composed->r_bounds( $actor );
-	}
-
-	$output;
-}
-
-with qw(
-	Renard::Jacquard::Layout::Role::WithInputStateCollection
-	MooX::Role::Logger
-);
 
 1;

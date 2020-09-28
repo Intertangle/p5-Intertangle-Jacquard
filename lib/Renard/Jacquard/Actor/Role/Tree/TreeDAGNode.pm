@@ -18,10 +18,6 @@ has _tree_dag_node => (
 	default => method() {
 		Tree::DAG_Node->new({ attributes => { actor => $self } })
 	},
-	handles => {
-		#parent => 'mother',
-		#add_child => 'add_daughter',
-	},
 );
 
 
