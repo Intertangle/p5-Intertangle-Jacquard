@@ -3,15 +3,15 @@
 use Test::Most tests => 1;
 
 use Renard::Incunabula::Common::Setup;
-use Renard::Jacquard::Actor;
-use Renard::Jacquard::Layout::Grid;
+use Intertangle::Jacquard::Actor;
+use Intertangle::Jacquard::Layout::Grid;
 
 use lib 't/lib';
 
 package SVGActor {
 	use SVG;
 	use Mu;
-	extends qw(Renard::Jacquard::Actor);
+	extends qw(Intertangle::Jacquard::Actor);
 
 	ro 'color';
 
@@ -28,20 +28,20 @@ package SVGActor {
 		);
 	}
 
-	with qw(Renard::Jacquard::Role::Geometry::Position2D);
-	#Renard::Jacquard::Role::Geometry::Size2D
+	with qw(Intertangle::Jacquard::Role::Geometry::Position2D);
+	#Intertangle::Jacquard::Role::Geometry::Size2D
 }
 
 subtest "Test grid layout" => fun() {
 	my $layout_group = Moo::Role->create_class_with_roles(
-		'Renard::Jacquard::Actor' => qw(
-		Renard::Jacquard::Role::Geometry::Position2D
-		Renard::Jacquard::Role::Geometry::Size2D
-		Renard::Jacquard::Role::Render::QnD::SVG::Group
-		Renard::Jacquard::Role::Render::QnD::Layout
+		'Intertangle::Jacquard::Actor' => qw(
+		Intertangle::Jacquard::Role::Geometry::Position2D
+		Intertangle::Jacquard::Role::Geometry::Size2D
+		Intertangle::Jacquard::Role::Render::QnD::SVG::Group
+		Intertangle::Jacquard::Role::Render::QnD::Layout
 	));
 	my $group = $layout_group->new(
-		layout => Renard::Jacquard::Layout::Grid->new( rows => 3, columns => 2 ),
+		layout => Intertangle::Jacquard::Layout::Grid->new( rows => 3, columns => 2 ),
 	);
 
 	$group->x->value( 0 );

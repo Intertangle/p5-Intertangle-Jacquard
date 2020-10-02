@@ -1,6 +1,6 @@
-requires 'Renard::Taffeta',
-	git => 'https://github.com/project-renard/p5-Renard-Taffeta.git',
+requires 'Intertangle::Taffeta',
+	git => 'https://github.com/Intertangle/p5-Intertangle-Taffeta.git',
 	branch => 'master';
-requires 'Renard::Punchcard',
-	git => 'https://github.com/project-renard/p5-Renard-Punchcard.git',
+requires 'Intertangle::Punchcard',
+	git => 'https://github.com/Intertangle/p5-Intertangle-Punchcard.git',
 	branch => 'master';
