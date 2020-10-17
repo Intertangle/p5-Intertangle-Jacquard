@@ -1,6 +1,6 @@
 use Renard::Incunabula::Common::Setup;
 package Intertangle::Jacquard::Role::Geometry::Size2D;
-# ABSTRACT: «TODO»
+# ABSTRACT: A 2D geometry with variable size
 
 use Mu::Role;
 use Intertangle::Punchcard::Attributes;

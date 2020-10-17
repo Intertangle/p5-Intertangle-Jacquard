@@ -1,11 +1,16 @@
 use Renard::Incunabula::Common::Setup;
 package Intertangle::Jacquard::Layout::Box;
-# ABSTRACT: «TODO»
+# ABSTRACT: Box layout
 
 use Mu;
 use Intertangle::Punchcard::Backend::Kiwisolver::Context;
 use Intertangle::Punchcard::Attributes;
 
+=attr margin
+
+Size of margin.
+
+=cut
 ro 'margin'; # TODO PositiveOrZeroInt
 
 variable 'outer_x';
@@ -15,6 +20,11 @@ lazy context => sub {
 	Intertangle::Punchcard::Backend::Kiwisolver::Context->new;
 };
 
+=method create_constraints
+
+...
+
+=cut
 method create_constraints($actor) {
 	my $items = $actor->children;
 
@@ -49,6 +59,11 @@ has _constraints => (
 	predicate => 1,
 );
 
+=method update
+
+...
+
+=cut
 method update($actor) {
 	my $solver = $self->context->solver;
 	my $items = $actor->children;

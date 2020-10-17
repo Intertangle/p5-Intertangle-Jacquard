@@ -4,6 +4,11 @@ package Intertangle::Jacquard::Role::Render::QnD::Cairo::Group;
 
 use Mu::Role;
 
+=method render_cairo
+
+...
+
+=cut
 method render_cairo($cr) {
 	$cr->save;
 	my $matrix = Cairo::Matrix->init_translate( $self->x->value, $self->y->value )

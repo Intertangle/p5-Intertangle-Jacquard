@@ -6,6 +6,11 @@ use Moo::Role;
 use Intertangle::Yarn::Graphene;
 use Intertangle::Yarn::Types qw(Point Size);
 
+=method bounds
+
+...
+
+=cut
 method bounds() {
 	my $rect = Intertangle::Yarn::Graphene::Rect->new(
 		origin => $self->children->[0]->origin_point,

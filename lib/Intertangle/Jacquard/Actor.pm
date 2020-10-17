@@ -9,6 +9,11 @@ with qw(
 	Intertangle::Jacquard::Actor::Role::Tree::TreeDAGNode::WithChildren
 );
 
+=method BUILD
+
+C<BUILD> for base class.
+
+=cut
 method BUILD(@) { }
 
 1;

@@ -5,6 +5,11 @@ package Intertangle::Jacquard::Role::Render::QnD::SVG;
 use Mu::Role;
 
 
+=method render
+
+...
+
+=cut
 method render($svg) {
 	...
 }

@@ -1,11 +1,16 @@
 use Renard::Incunabula::Common::Setup;
 package Intertangle::Jacquard::Layout::Grid;
-# ABSTRACT: «TODO»
+# ABSTRACT: Grid layout
 
 use Mu;
 use Intertangle::Punchcard::Backend::Kiwisolver::Context;
 use List::AllUtils qw(reduce);
 
+=attr rows columns
+
+Number of rows / columns.
+
+=cut
 ro 'rows'; # TODO PositiveInt
 ro 'columns'; # TODO PositiveInt
 
@@ -20,6 +25,11 @@ method _rc_to_item_no($r, $c) {
 	$r * $self->columns + $c;
 }
 
+=method create_constraints
+
+...
+
+=cut
 method create_constraints($actor) {
 	my $items = $actor->children;
 
@@ -61,6 +71,11 @@ has _constraints => (
 	predicate => 1,
 );
 
+=method update
+
+...
+
+=cut
 method update($actor) {
 	my $solver = $self->context->solver;
 	my $items = $actor->children;

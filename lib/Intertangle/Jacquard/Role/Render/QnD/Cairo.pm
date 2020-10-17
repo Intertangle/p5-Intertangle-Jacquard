@@ -4,6 +4,11 @@ package Intertangle::Jacquard::Role::Render::QnD::Cairo;
 
 use Mu::Role;
 
+=method render_cairo
+
+...
+
+=cut
 method render_cairo($cr) {
 	...
 }

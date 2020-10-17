@@ -4,11 +4,21 @@ package Intertangle::Jacquard::Role::Render::QnD::Layout;
 
 use Moo::Role;
 
+=attr layout
+
+...
+
+=cut
 has layout => (
 	is => 'ro',
 	required => 1,
 );
 
+=method update_layout
+
+...
+
+=cut
 method update_layout() {
 	$self->layout->update($self);
 }
