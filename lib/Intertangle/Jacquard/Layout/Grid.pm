@@ -88,8 +88,8 @@ method update($actor) {
 		for my $constraint (@$constraints) {
 			$solver->add_constraint($constraint);
 		}
-		$solver->add_edit_variable($first_item->x, Intertangle::API::Kiwisolver::Strength::STRONG );
-		$solver->add_edit_variable($first_item->y, Intertangle::API::Kiwisolver::Strength::STRONG );
+		$solver->add_edit_variable($first_item->x, Graphics::Layout::Kiwisolver::Strength::STRONG );
+		$solver->add_edit_variable($first_item->y, Graphics::Layout::Kiwisolver::Strength::STRONG );
 	}
 
 	#$solver->suggest_value($first_item->x, $actor->x->value);

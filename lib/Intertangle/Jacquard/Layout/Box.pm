@@ -77,8 +77,8 @@ method update($actor) {
 			$solver->add_constraint($constraint);
 		}
 
-		$solver->add_edit_variable($self->outer_x, Intertangle::API::Kiwisolver::Strength::STRONG );
-		$solver->add_edit_variable($self->outer_y, Intertangle::API::Kiwisolver::Strength::STRONG );
+		$solver->add_edit_variable($self->outer_x, Graphics::Layout::Kiwisolver::Strength::STRONG );
+		$solver->add_edit_variable($self->outer_y, Graphics::Layout::Kiwisolver::Strength::STRONG );
 	}
 
 	$solver->suggest_value( $self->outer_x, 0);
