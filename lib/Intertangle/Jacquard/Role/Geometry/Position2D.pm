@@ -1,6 +1,6 @@
 use Renard::Incunabula::Common::Setup;
 package Intertangle::Jacquard::Role::Geometry::Position2D;
-# ABSTRACT: A 2D geometry with variable position
+# ABSTRACT: A 2-D geometry with variable position
 
 use Mu::Role;
 use Intertangle::Punchcard::Attributes;
